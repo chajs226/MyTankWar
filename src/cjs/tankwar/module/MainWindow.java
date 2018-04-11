@@ -5,10 +5,10 @@ import java.awt.event.WindowAdapter;
 import java.io.Console;
 import java.util.List;
 
-import xz.tankwar.component.tank.ComTank;
-import xz.tankwar.component.tank.PlayerTank;
-import xz.tankwar.component.weapon.Weapon;
-import xz.tankwar.module.MainWindow;
+import cjs.tankwar.component.tank.ComTank;
+import cjs.tankwar.component.tank.PlayerTank;
+import cjs.tankwar.component.weapon.Weapon;
+import cjs.tankwar.module.MainWindow;
 
 //import static를 하면 해당 클래스의 static 멤버를 fully qualified name 없이 사용할수있게 한다.
 import static cjs.tankwar.module.ProPertiesManager.*;
