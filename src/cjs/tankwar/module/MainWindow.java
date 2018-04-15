@@ -20,9 +20,18 @@ public class MainWindow extends Frame{
 	public static final int REFRESH_INTERVAL = 20;
 	public static final int SHAKE_RANGE = 20;
 	
+    public static final int STAT_GAME = 0;
+    public static final int STAT_START = 1;
+    public static final int STAT_HELP = 2;
+    public static final int STAT_PAUSE = 3;
+    public static final int STAT_OVER = 4;
+    public static final int STAT_RANKLIST = 5;
+    
     /* Component Area */
     public static boolean archiveAvalible = false;
     public static boolean showConsole = true;
+    
+    public static int stat = 0;
     
     public static PlayerTank myTank = null;
     public static List<ComTank> tanks = null;

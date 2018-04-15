@@ -1,14 +1,22 @@
 package cjs.tankwar.component.tank;
 
-import static java.awt.Color.black;
-import static java.awt.Color.gray;
-import static cjs.tankwar.component.Direction.STOP;
+import static java.awt.Color.*;
+import static xz.tankwar.component.Direction.STOP;
+import static xz.tankwar.component.Direction.erase;
+import static cjs.tankwar.component.Direction.*;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Polygon;
 import java.io.Serializable;
 
 import cjs.tankwar.component.GameComponent;
+import cjs.tankwar.component.tank.Tank;
+import cjs.tankwar.module.ConsoleWindow;
+import cjs.tankwar.module.MainWindow;
+import static cjs.tankwar.module.ProPertiesManager.*;
 import cjs.tankwar.component.Direction;
 
 
@@ -42,9 +50,189 @@ public class Tank extends GameComponent {
 
     protected Direction moveDirLimit = STOP;
     protected int moveTimeLimit = 0;
+    
+    public void setMoveDir(Direction moveDir) {
+    	this.moveDir = moveDir;
+    }
+    
+    public void setShootDir(Direction dir) {
+        if (isLimited()) //movetime이 종료되면 슛방향은 설정 못하도록 함
+            return;
+        if (dir == null) {
+            shootDir = null;
+            return;
+        }
+        this.shootDir = dir;
+        if (shootDir == null)
+            shootDir = STOP;
+        if (shootDir != null && shootDir != STOP)
+            this.cannonDir = shootDir;
+    }
+    
+    public boolean isLimited() {
+        return (moveTimeLimit != 0);
+    }
+    
+    public void setCannonDir(Direction cannonDir) {
+        if (cannonDir != STOP)
+            this.cannonDir = cannonDir;
+    } 
 
-	
+    public void resetMoveDir(Direction dir) {
+        if (isLimited())
+            return;
+        moveDir = erase(moveDir, dir);
+        if ((shootDir == null || shootDir == STOP) && moveDir != STOP)
+            cannonDir = moveDir;
+    }
+    
+    public void resetShootDir(Direction dir) {
+        if (isLimited())
+            return;
+        if (dir == null) {
+            shootDir = STOP;
+            return;
+        }
+        if (shootDir != null && shootDir != STOP)
+            shootDir = erase(shootDir, dir);
+        if (shootDir != null && shootDir != STOP)
+            cannonDir = shootDir;
+    }
+
+    public Direction getShootDir() {
+        return shootDir;
+    }
+
+    public Direction getMoveDir() {
+        return moveDir;
+    }
+
+    public Direction getCannonDir() {
+        return cannonDir;
+    }
+    
+    public void setMoveLimit(Direction dir, int time) {
+        moveDirLimit = dir;
+        moveTimeLimit = time;
+    }
+    
+    public int getPower() {
+        return power;
+    }
+    
+    //Tank가 윈도우에서 움직일 수 있는 범위를 설정함. 거기를 벗어나면 죽은 것으로 처리
+    //TODO : BlockTime은 뭔지 파악이 안되었음
+    void moveLimit() {
+        if (ignoreMoveLimit) {
+            if (x < -25 || x > MainWindow.WINDOW_WIDTH + 25
+                    || y < -25 || y > MainWindow.WINDOW_HEIGHT + 25)
+                abolish();
+            return;
+        }
+        if (x < 25) {
+            x = 25;
+            blockTime = 70;
+        }
+        if (y < 45) {
+            y = 45;
+            blockTime = 70;
+        }
+        if (x > MainWindow.WINDOW_WIDTH - 25) {
+            x = MainWindow.WINDOW_WIDTH - 25;
+            blockTime = 70;
+        }
+        if (y > MainWindow.WINDOW_HEIGHT - 25) {
+            y = MainWindow.WINDOW_HEIGHT - 25;
+            blockTime = 70;
+        }
+    }
+    
+	//메인윈도우에서 player의 이름 표시를 위한 dialog
     class Dialog implements Serializable {
     	
+        protected String[] content = null;
+        protected int textHeight;
+        protected int textWidth = 0;
+        protected Direction dir = DOWN_LEFT;
+        protected int lastTime = 2000;
+
+        //_content 파라미터로 PC사용자의 이름이 넘어옴.
+        // 폰트 사이즈를 기반으로 dialog의 크기를 구함
+        public Dialog(String _content) {
+            FontMetrics fm = ConsoleWindow.console.getFontMetrics(BUBBLE_FONT);
+            content = _content.split("\n");
+            textHeight = content.length * BUBBLE_FONT.getSize()
+                    + DIALOG_BORDER_WIDTH * 2;
+            for (int i = 0; i < content.length; ++i)
+                textWidth = Math.max(textWidth, fm.stringWidth(content[i]));
+            textWidth += DIALOG_BORDER_WIDTH * 2;
+    
+        }
+
+        //dialog의 위치값 산정. 탱크 위치에 따라 dialog의 위치도 변화시킴
+        private Point locateRect() {
+            int nx = x, ny = y;
+            int sumOffsetX = Tank.HALF_WIDTH + DIALOG_ARROW_WIDTH + 3;
+            int sumOffsetY = Tank.HALF_WIDTH + DIALOG_ARROW_WIDTH + 3;
+            if (dir.includes(UP))
+                ny -= sumOffsetY + textHeight;
+            if (dir.includes(LEFT))
+                nx -= sumOffsetX + textWidth;
+            if (dir.includes(DOWN))
+                ny += sumOffsetY;
+            if (dir.includes(RIGHT))
+                nx += sumOffsetX;
+            return new Point(nx, ny);
+        }
+
+        //dialog의 사각형 박스의 3꼭지점의 위치를 2차원 배열에 넣음. 색을 채우는 draw 영역을 잡는데 사용됨.
+        private Polygon getArrow() {
+            Polygon pol = new Polygon();
+            int px = x, py = y;
+            px += unitVectorX(dir) * Math.sqrt(2.0) * (Tank.HALF_WIDTH + 5);
+            py += unitVectorY(dir) * Math.sqrt(2.0) * (Tank.HALF_WIDTH + 5);
+            pol.addPoint(px, py);
+            px += unitVectorX(dir) * Math.sqrt(2.0) * DIALOG_ARROW_WIDTH;
+            py += unitVectorY(dir) * Math.sqrt(2.0) * DIALOG_ARROW_WIDTH;
+            pol.addPoint(px, py + 3);
+            pol.addPoint(px, py - 3);
+            return pol;
+        }
+        
+        private void refreshDirection() {
+            if (x < textWidth + 40)
+                dir = compose(dir, RIGHT);
+            if (y < textHeight + 60)
+                dir = compose(dir, DOWN);
+            if (x > MainWindow.WINDOW_WIDTH - textWidth - 40)
+                dir = compose(dir, LEFT);
+            if (y > MainWindow.WINDOW_HEIGHT -textHeight - 40)
+                dir = compose(dir, UP);
+            
+        }
+        
+        //dialog 그리는 함수
+        public void draw(Graphics g) {
+            if (lastTime > 0 && MainWindow.stat != MainWindow.STAT_PAUSE)
+                --lastTime;
+            if (lastTime == 0)
+                Tank.this.dialog = null;
+            refreshDirection();
+            g.setColor(DIALOG_BACKGROUND_COLOR);
+            Point p = locateRect();
+            
+            //dialog 박스의 시작위치에서 박스크기만큼 setColor를 적용한다.
+            g.fillRoundRect(p.x, p.y, textWidth, textHeight,
+                    DIALOG_BORDER_WIDTH, DIALOG_BORDER_WIDTH);
+            
+            //dialog박스안에 들어갈 글자의 위치와 색을 설정
+            g.fillPolygon(getArrow());
+            g.setColor(DIALOG_FOREGROUND_COLOR);            
+            g.setFont(BUBBLE_FONT);
+            
+            for (int i = 0; i < content.length; ++i)
+                g.drawString(content[i], p.x + DIALOG_BORDER_WIDTH,
+                        p.y + DIALOG_BORDER_WIDTH + BUBBLE_FONT.getSize() * (i + 1));
+        }
     }
 }
