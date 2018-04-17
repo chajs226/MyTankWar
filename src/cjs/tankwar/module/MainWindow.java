@@ -6,7 +6,7 @@ import java.io.Console;
 import java.util.List;
 
 import cjs.tankwar.component.tank.PlayerTank;
-import cjs.tankwar.module.MainWindow;
+
 
 //import static를 하면 해당 클래스의 static 멤버를 fully qualified name 없이 사용할수있게 한다.
 import static cjs.tankwar.module.ProPertiesManager.*;
@@ -40,6 +40,13 @@ public class MainWindow extends Frame{
     public static List<Weapon> supplies = null;
     public static List<Weapon> explosions = null;
     
+    /* Statistics */
+    private static int killed;
+    private static int waveNum;
+    private static Integer killedLock = 0;
+    static String gameID;
+    static boolean valid = true;
+    
 	/* Others */
 	public static ConsoleWindow ConSole = ConsoleWindow.console;
 	public static final MainWindow MW = new MainWindow();
@@ -57,6 +64,18 @@ public class MainWindow extends Frame{
 		
 		
 	}
+	
+    /* Game Control Methods */
+    public static void addKilled() {
+        if (stat != STAT_GAME)
+            return;
+        synchronized (killedLock) {
+            ++killed;
+            if (killed == 1000)
+                myTank.speak("Thousand Killed.");
+            myTank.hintNewSkill(killed);
+        }
+    }
 	
 	/* Listeners */
 	private class MainWindowAdapter extends WindowAdapter {

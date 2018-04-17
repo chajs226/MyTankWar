@@ -6,7 +6,7 @@ import java.util.Random;
 import cjs.tankwar.component.Direction;
 
 
-/* enumÀÇ ±¸Çö.. 1Àº UP, 3Àº UP_LEFT...
+/* enumì˜ êµ¬í˜„.. 1ì€ UP, 3ì€ UP_LEFT...
  * 
  */
 public enum Direction implements Serializable{
@@ -31,7 +31,7 @@ public enum Direction implements Serializable{
         this.value = value;
     } 
     
-    //TODO : ¿ëµµ´Â???
+  //TODO : ìš©ë„ëŠ”???
     public static Direction forDirection(int dirValue) {
         for (Direction dir : DIRECTIONS_WITH_STOP)
             if (dirValue == dir.value)
@@ -39,7 +39,7 @@ public enum Direction implements Serializable{
         return null;
     }
     
-    //TODO : È¸Àü.. x°ª¿¡ µû¶ó.. º¯È­µÇ´Â directionÀ» ¸®ÅÏÇÏ´Âµ¥.. Á¤È®ÇÑ ¿ø¸®´Â ÃßÈÄ¿¡ È®ÀÎÇÊ¿ä
+    //TODO : íšŒì „.. xê°’ì— ë”°ë¼.. ë³€í™”ë˜ëŠ” directionì„ ë¦¬í„´í•˜ëŠ”ë°.. ì •í™•í•œ ì›ë¦¬ëŠ” ì¶”í›„ì— í™•ì¸í•„ìš”
     public static Direction rotate(Direction dir, int x) {
         if (dir == STOP)
             return STOP;
@@ -54,7 +54,7 @@ public enum Direction implements Serializable{
         return rotate(dir, 1);
     }
     
-    //TODO : ·£´ıÀº ¾ğÁ¦ ¾²´Â °É±î?
+  //TODO : ëœë¤ì€ ì–¸ì œ ì“°ëŠ” ê±¸ê¹Œ?
     public static Direction randomDirection() {
         return DIRECTIONS[new Random().nextInt(DIRECTIONS.length)];
     }
@@ -64,10 +64,10 @@ public enum Direction implements Serializable{
     }
     
     /*
-     * dir.valueÀÇ °ªÀÇ 1ºñÆ® °¹¼ö°¡ 2°³ÀÌ¸é lenÀº 1/·çÆ®2 ÀÇ ¸ò
-     * dir.value°¡ UP.value
+     * dir.valueì˜ ê°’ì˜ 1ë¹„íŠ¸ ê°¯ìˆ˜ê°€ 2ê°œì´ë©´ lenì€ 1/ë£¨íŠ¸2 ì˜ ëª«
+     * dir.valueê°€ UP.value
      */
-    //TODO : ¾Æ·¡ÀÇ ¹æÇâ¿¡ ´ëÇÑ ·ÎÁ÷Àº ÃßÈÄ È®ÀÎ. ¾î·Æ´Ù;;
+    //TODO : ì•„ë˜ì˜ ë°©í–¥ì— ëŒ€í•œ ë¡œì§ì€ ì¶”í›„ í™•ì¸. ì–´ë µë‹¤;;
     public static double unitVectorX(Direction dir) {
         double len = 1.0;
         if (Integer.bitCount(dir.value) == 2)

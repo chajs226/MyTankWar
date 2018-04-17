@@ -8,9 +8,9 @@ import java.util.Random;
 import cjs.tankwar.component.Drawable;
 import cjs.tankwar.module.MainWindow;
 
-/* Serializable ÀÎÅÍÆäÀÌ½º¸¦ »ó¼Ó¹ÞÀ¸¸é Á÷·ÄÈ­°¡ °¡´É´Ù. Á÷·ÄÈ­¶õ ÀÚ¹Ù class °´Ã¼¸¦ ¹ÙÀÌÆ® ½ºÆ®¸²
- * ÇüÅÂ·Î ¸¸µç´Ù´Â °ÍÀÎµ¥, JVM¸Þ¸ð¸®¿¡¼­¸¸ »óÁÖµÇ¾î ÀÖ´Â µ¥ÀÌÅÍ¸¦ ¿ÜºÎ ÀÚ¹Ù½Ã½ºÅÛ¿¡¼­µµ ¾µ¼öÀÖµµ·Ï ¹ÙÀÌÆ® 
- * ÇüÅÂ·Î º¯È¯ÇÏ´Â °ÍÀÌ´Ù.
+/* Serializable ì¸í„°íŽ˜ì´ìŠ¤ë¥¼ ìƒì†ë°›ìœ¼ë©´ ì§ë ¬í™”ê°€ ê°€ëŠ¥ë‹¤. ì§ë ¬í™”ëž€ ìžë°” class ê°ì²´ë¥¼ ë°”ì´íŠ¸ ìŠ¤íŠ¸ë¦¼
+ * í˜•íƒœë¡œ ë§Œë“ ë‹¤ëŠ” ê²ƒì¸ë°, JVMë©”ëª¨ë¦¬ì—ì„œë§Œ ìƒì£¼ë˜ì–´ ìžˆëŠ” ë°ì´í„°ë¥¼ ì™¸ë¶€ ìžë°”ì‹œìŠ¤í…œì—ì„œë„ ì“¸ìˆ˜ìžˆë„ë¡ ë°”ì´íŠ¸ 
+ * í˜•íƒœë¡œ ë³€í™˜í•˜ëŠ” ê²ƒì´ë‹¤.
  */
 
 public abstract class GameComponent implements Drawable, Serializable {
@@ -59,8 +59,8 @@ public abstract class GameComponent implements Drawable, Serializable {
 		this.y = y;
 	}
 	
-	//ÄÄÆ÷³ÍÆ®»çÀÌÀÇ °Å¸®¸¦ ÃøÁ¤ (ÇÇÅ¸°í¶ó½ºÀÇ Á¤¸®¸¦ ÀÌ¿ë)	
-	//Á¦°öÀ» ¾ÈÇÏ°í ½ÇÇàÇßÀ» ¶§, ÄÄÆ÷³ÍÆ®°£¿¡ ÀÌ»óÇÏ°Ô ¿òÁ÷ÀÌ´Â Çö»óÀÌ ¾ø¾úÀ½ ¿ÖÀÏ±î..
+	//ì»´í¬ë„ŒíŠ¸ì‚¬ì´ì˜ ê±°ë¦¬ë¥¼ ì¸¡ì • (í”¼íƒ€ê³ ë¼ìŠ¤ì˜ ì •ë¦¬ë¥¼ ì´ìš©)	
+	//ì œê³±ì„ ì•ˆí•˜ê³  ì‹¤í–‰í–ˆì„ ë•Œ, ì»´í¬ë„ŒíŠ¸ê°„ì— ì´ìƒí•˜ê²Œ ì›€ì§ì´ëŠ” í˜„ìƒì´ ì—†ì—ˆìŒ ì™œì¼ê¹Œ..
 	public double distance(GameComponent g) {
 		if (g== null)
 			return 1000000000.0;

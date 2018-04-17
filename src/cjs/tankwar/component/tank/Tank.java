@@ -1,8 +1,11 @@
 package cjs.tankwar.component.tank;
 
 import static java.awt.Color.*;
-import static xz.tankwar.component.Direction.STOP;
-import static xz.tankwar.component.Direction.erase;
+import static cjs.tankwar.component.Direction.STOP;
+import static cjs.tankwar.component.Direction.erase;
+import static cjs.tankwar.component.Direction.unitVectorX;
+import static cjs.tankwar.component.Direction.unitVectorY;
+import static cjs.tankwar.component.tank.ComTank.ComTankType.IAMANORANGE;
 import static cjs.tankwar.component.Direction.*;
 
 import java.awt.Color;
@@ -16,6 +19,11 @@ import cjs.tankwar.component.GameComponent;
 import cjs.tankwar.component.tank.Tank;
 import cjs.tankwar.module.ConsoleWindow;
 import cjs.tankwar.module.MainWindow;
+import xz.tankwar.component.tank.Tank.Dialog;
+import cjs.tankwar.component.tank.ComTank;
+import cjs.tankwar.component.tank.PlayerTank;
+import cjs.tankwar.component.weapon.Explosion;
+
 import static cjs.tankwar.module.ProPertiesManager.*;
 import cjs.tankwar.component.Direction;
 
@@ -33,7 +41,7 @@ public class Tank extends GameComponent {
             255, 150);
     public static final Color DIALOG_FOREGROUND_COLOR = black;
     
-    //¿òÁ÷ÀÓ¹æÇâ, ½´ÆÃ¹æÇâ µîÀ¸·Î ÃÊ±â°ª enum STOPÀ¸·Î ¼³Á¤ÇÔ
+  //ì›€ì§ì„ë°©í–¥, ìŠˆíŒ…ë°©í–¥ ë“±ìœ¼ë¡œ ì´ˆê¸°ê°’ enum STOPìœ¼ë¡œ ì„¤ì •í•¨
     protected Direction moveDir = STOP;
     protected Direction shootDir = STOP;
     protected Direction cannonDir = STOP;
@@ -56,7 +64,7 @@ public class Tank extends GameComponent {
     }
     
     public void setShootDir(Direction dir) {
-        if (isLimited()) //movetimeÀÌ Á¾·áµÇ¸é ½¸¹æÇâÀº ¼³Á¤ ¸øÇÏµµ·Ï ÇÔ
+        if (isLimited()) //movetimeì´ ì¢…ë£Œë˜ë©´ ìŠ›ë°©í–¥ì€ ì„¤ì • ëª»í•˜ë„ë¡ í•¨
             return;
         if (dir == null) {
             shootDir = null;
@@ -120,8 +128,8 @@ public class Tank extends GameComponent {
         return power;
     }
     
-    //Tank°¡ À©µµ¿ì¿¡¼­ ¿òÁ÷ÀÏ ¼ö ÀÖ´Â ¹üÀ§¸¦ ¼³Á¤ÇÔ. °Å±â¸¦ ¹ş¾î³ª¸é Á×Àº °ÍÀ¸·Î Ã³¸®
-    //TODO : BlockTimeÀº ¹ºÁö ÆÄ¾ÇÀÌ ¾ÈµÇ¾úÀ½
+    //Tankê°€ ìœˆë„ìš°ì—ì„œ ì›€ì§ì¼ ìˆ˜ ìˆëŠ” ë²”ìœ„ë¥¼ ì„¤ì •í•¨. ê±°ê¸°ë¥¼ ë²—ì–´ë‚˜ë©´ ì£½ì€ ê²ƒìœ¼ë¡œ ì²˜ë¦¬
+    //TODO : BlockTimeì€ ë­”ì§€ íŒŒì•…ì´ ì•ˆë˜ì—ˆìŒ
     void moveLimit() {
         if (ignoreMoveLimit) {
             if (x < -25 || x > MainWindow.WINDOW_WIDTH + 25
@@ -147,7 +155,165 @@ public class Tank extends GameComponent {
         }
     }
     
-	//¸ŞÀÎÀ©µµ¿ì¿¡¼­ playerÀÇ ÀÌ¸§ Ç¥½Ã¸¦ À§ÇÑ dialog
+    
+    private boolean block(int x, int y) {
+        int dx, dy;
+        blockTime = 1;
+        //ì´ ê°ì²´ê°€  myTankê°€ ì•„ë‹ˆê³ , myTank ë³¼ ìˆ˜ ìˆëŠ” ìƒíƒœë¼ë©´. (com ê°ì²´ì¤‘ í•˜ë‚˜ë¼ë©´)
+        //myTank ì™€ ê±°ë¦¬ë¥¼ êµ¬í•´ì„œ (Math.abs ì ˆëŒ€ê°’ êµ¬í•˜ëŠ” í•¨ìˆ˜) tankê°ì²´í¬ê¸°ë³´ë‹¤ ë” ì¢í˜€ì§€ë©´
+        //true ë¥¼ ë¦¬í„´.  blockí•˜ê² ë‹¤ëŠ” ì˜ë¯¸ì¸ë“¯
+        if (MainWindow.myTank != this && !MainWindow.myTank.isInvisible()) {
+            Tank t = MainWindow.myTank;
+            dx = (x - t.x);
+            dy = (y - t.y);
+            if (Math.abs(dx) < Tank.HALF_WIDTH * 2
+                    && Math.abs(dy) < Tank.HALF_WIDTH * 2) {
+                return true;
+            }
+        }
+
+        //2ê°œì´ìƒì˜ ìŠ¤ë ˆë“œê°€ synchronized method ëŠ” ë™ì‹œì— ì‹¤í–‰í• ìˆ˜ì—†ë‹¤.
+        //tanks ëŠ” Computer tank.. comtank ì¤‘ì—ì„œ ë³¸ì¸ì´ë¼ë©´  continueë¡œ ìŠ¤í‚µ
+        //comtank ë³¸ì¸ì´ ì•„ë‹ˆë©´, ê±°ë¦¬ë¥¼ ê³„ì‚°í•´ì„œ blockì²˜ë¦¬ë¥¼í•¨
+        synchronized (MainWindow.tanks) {
+            for (Tank t : MainWindow.tanks) {
+                if (t == this)
+                    continue;
+                dx = (x - t.x);
+                dy = (y - t.y);
+                if (Math.abs(dx) < Tank.HALF_WIDTH * 2
+                        && Math.abs(dy) < Tank.HALF_WIDTH * 2) {
+                    return true;
+                }
+            }
+        }
+        synchronized (MainWindow.friends) {
+            for (Tank t : MainWindow.friends) {
+                if (t == this)
+                    continue;
+                dx = (x - t.x);
+                dy = (y - t.y);
+                if (Math.abs(dx) < Tank.HALF_WIDTH * 2
+                        && Math.abs(dy) < Tank.HALF_WIDTH * 2) {
+                    return true;
+                }
+            }
+        }
+        blockTime = 0;
+        return false;
+    }
+    
+    //TODO :  Direction ë¡œì§í™•ì¸ í•´ì•¼ ì´í•´ê°€ëŠ¥   
+    void shift(Direction dir, int step) {
+    x += (int)(step * unitVectorX(dir));
+    y += (int)(step * unitVectorY(dir));
+    
+    }
+
+    public void forceMove(Direction dir, int step) {
+        moveDir = dir;
+        if (moveDir == STOP)
+            return;
+        if (shootDir == STOP)
+            cannonDir = moveDir;
+        x += (int)(step * unitVectorX(dir));
+        y += (int)(step * unitVectorY(dir));
+    }
+
+    public void move(Direction dir, int step) {
+        if (this instanceof PlayerTank
+                && (((PlayerTank)this).isInvisible()
+                || ((PlayerTank)this).isCrazy())) {
+            forceMove(dir, step);
+            if (moveTimeLimit == 0) {
+                moveLimit();
+            }
+            return;
+        }
+        if (block(x, y) && !(this instanceof PlayerTank)) {
+            HP = 0;
+            makeDamage(1);
+        }
+        moveDir = dir;
+        if (moveDir == STOP)
+            return;
+        if (shootDir == STOP)
+            cannonDir = moveDir;
+        int tx = x, ty = y;
+        tx += (int)(step * unitVectorX(dir));
+        ty += (int)(step * unitVectorY(dir));
+        if (block(tx, ty))
+            return;
+        x = tx;
+        y = ty;
+        if (moveTimeLimit == 0) {
+            moveLimit();
+        }
+    }
+
+    public void move() {
+        if (moveTimeLimit > 0) {
+            --moveTimeLimit;
+            move(moveDirLimit, STEP);
+        } else
+            move(moveDir, STEP);
+    }
+
+    public void move(Direction dir) {
+        moveDir = dir;
+        move();
+    }
+    
+    //damage ë°œìƒ.. ì£½ì—ˆìœ¼ë©´ trueë¥¼ ë¦¬í„´
+    public void makeDamage(int dmg) {
+        if (!alive)
+            return;
+        modifyHP(-dmg);
+        if (HP == 0) {
+            abolish(); //aliveë¥¼ falseë¡œ assign
+            explode(); 
+        }
+        energyBarLastTime = 100;
+    }
+    
+    public void modifyHP(int dlt) {
+        HP += dlt;
+        if (HP > maxHP)
+            HP = maxHP;
+        if (HP < 0)
+            HP = 0;
+    }
+    
+    //kill ì²˜ë¦¬.. kill countë¥¼ ì¦ê°€ì‹œí‚´..
+    //TODO : fact 1ì´ ë­”ì§€ í™•ì¸ í•„ìš”, explosion ì€ weaponì— ëŒ€í•œ êµ¬í˜„ ì´í•´ í•„ìš”
+    void explode() {
+        if (fact == 1) {        	
+            MainWindow.addKilled();
+            if (((ComTank)this).tag == IAMANORANGE)
+                ComTank.existOrange = false;
+        }
+        synchronized (MainWindow.explosions) {
+            MainWindow.explosions.add(new Explosion(x, y, EXPLOSION_R, fact));
+        }
+    }
+    
+    public int getHP() {
+        return HP;
+    }
+    public int getMaxHP() {
+        return maxHP;
+    }
+    
+    public boolean shootBlocked() {
+        return false;
+    }
+    //í…ŒìŠ¤íŠ¸
+    
+    public void speak(String s) {
+        dialog = new Dialog(s);
+    }
+    
+	///ë©”ì¸ìœˆë„ìš°ì—ì„œ playerì˜ ì´ë¦„ í‘œì‹œë¥¼ ìœ„í•œ dialog
     class Dialog implements Serializable {
     	
         protected String[] content = null;
@@ -156,8 +322,8 @@ public class Tank extends GameComponent {
         protected Direction dir = DOWN_LEFT;
         protected int lastTime = 2000;
 
-        //_content ÆÄ¶ó¹ÌÅÍ·Î PC»ç¿ëÀÚÀÇ ÀÌ¸§ÀÌ ³Ñ¾î¿È.
-        // ÆùÆ® »çÀÌÁî¸¦ ±â¹İÀ¸·Î dialogÀÇ Å©±â¸¦ ±¸ÇÔ
+        //_content íŒŒë¼ë¯¸í„°ë¡œ PCì‚¬ìš©ìì˜ ì´ë¦„ì´ ë„˜ì–´ì˜´.
+        // í°íŠ¸ ì‚¬ì´ì¦ˆë¥¼ ê¸°ë°˜ìœ¼ë¡œ dialogì˜ í¬ê¸°ë¥¼ êµ¬í•¨
         public Dialog(String _content) {
             FontMetrics fm = ConsoleWindow.console.getFontMetrics(BUBBLE_FONT);
             content = _content.split("\n");
@@ -169,7 +335,7 @@ public class Tank extends GameComponent {
     
         }
 
-        //dialogÀÇ À§Ä¡°ª »êÁ¤. ÅÊÅ© À§Ä¡¿¡ µû¶ó dialogÀÇ À§Ä¡µµ º¯È­½ÃÅ´
+        //dialogì˜ ìœ„ì¹˜ê°’ ì‚°ì •. íƒ±í¬ ìœ„ì¹˜ì— ë”°ë¼ dialogì˜ ìœ„ì¹˜ë„ ë³€í™”ì‹œí‚´
         private Point locateRect() {
             int nx = x, ny = y;
             int sumOffsetX = Tank.HALF_WIDTH + DIALOG_ARROW_WIDTH + 3;
@@ -185,7 +351,7 @@ public class Tank extends GameComponent {
             return new Point(nx, ny);
         }
 
-        //dialogÀÇ »ç°¢Çü ¹Ú½ºÀÇ 3²ÀÁöÁ¡ÀÇ À§Ä¡¸¦ 2Â÷¿ø ¹è¿­¿¡ ³ÖÀ½. »öÀ» Ã¤¿ì´Â draw ¿µ¿ªÀ» Àâ´Âµ¥ »ç¿ëµÊ.
+        //dialogì˜ ì‚¬ê°í˜• ë°•ìŠ¤ì˜ 3ê¼­ì§€ì ì˜ ìœ„ì¹˜ë¥¼ 2ì°¨ì› ë°°ì—´ì— ë„£ìŒ. ìƒ‰ì„ ì±„ìš°ëŠ” draw ì˜ì—­ì„ ì¡ëŠ”ë° ì‚¬ìš©ë¨.
         private Polygon getArrow() {
             Polygon pol = new Polygon();
             int px = x, py = y;
@@ -211,7 +377,7 @@ public class Tank extends GameComponent {
             
         }
         
-        //dialog ±×¸®´Â ÇÔ¼ö
+        //dialog ê·¸ë¦¬ëŠ” í•¨ìˆ˜
         public void draw(Graphics g) {
             if (lastTime > 0 && MainWindow.stat != MainWindow.STAT_PAUSE)
                 --lastTime;
@@ -221,11 +387,11 @@ public class Tank extends GameComponent {
             g.setColor(DIALOG_BACKGROUND_COLOR);
             Point p = locateRect();
             
-            //dialog ¹Ú½ºÀÇ ½ÃÀÛÀ§Ä¡¿¡¼­ ¹Ú½ºÅ©±â¸¸Å­ setColor¸¦ Àû¿ëÇÑ´Ù.
+          //dialog ë°•ìŠ¤ì˜ ì‹œì‘ìœ„ì¹˜ì—ì„œ ë°•ìŠ¤í¬ê¸°ë§Œí¼ setColorë¥¼ ì ìš©í•œë‹¤.
             g.fillRoundRect(p.x, p.y, textWidth, textHeight,
                     DIALOG_BORDER_WIDTH, DIALOG_BORDER_WIDTH);
             
-            //dialog¹Ú½º¾È¿¡ µé¾î°¥ ±ÛÀÚÀÇ À§Ä¡¿Í »öÀ» ¼³Á¤
+          //dialogë°•ìŠ¤ì•ˆì— ë“¤ì–´ê°ˆ ê¸€ìì˜ ìœ„ì¹˜ì™€ ìƒ‰ì„ ì„¤ì •
             g.fillPolygon(getArrow());
             g.setColor(DIALOG_FOREGROUND_COLOR);            
             g.setFont(BUBBLE_FONT);
