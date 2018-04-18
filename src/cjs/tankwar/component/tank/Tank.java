@@ -1,6 +1,8 @@
 package cjs.tankwar.component.tank;
 
 import static java.awt.Color.*;
+import static xz.tankwar.component.Direction.unitVectorX;
+import static xz.tankwar.component.Direction.unitVectorY;
 import static cjs.tankwar.component.Direction.STOP;
 import static cjs.tankwar.component.Direction.erase;
 import static cjs.tankwar.component.Direction.unitVectorX;
@@ -19,7 +21,8 @@ import cjs.tankwar.component.GameComponent;
 import cjs.tankwar.component.tank.Tank;
 import cjs.tankwar.module.ConsoleWindow;
 import cjs.tankwar.module.MainWindow;
-import xz.tankwar.component.tank.Tank.Dialog;
+import cjs.tankwar.component.tank.Tank.Dialog;
+import cjs.tankwar.component.weapon.Missile;
 import cjs.tankwar.component.tank.ComTank;
 import cjs.tankwar.component.tank.PlayerTank;
 import cjs.tankwar.component.weapon.Explosion;
@@ -312,6 +315,41 @@ public class Tank extends GameComponent {
     public void speak(String s) {
         dialog = new Dialog(s);
     }
+    
+    //TODO : Missile (weapon 객체 이후 확인) 파라미터받는 메소드와 안받는 메소드 용도 확인    
+    public void launch() {
+        if (isLimited())
+            return;
+        if (shootBlocked())  //무조건 false인데, 무슨 의미이지?
+            return;
+        int nx = x, ny = y, cl = CANNON_LEN + 4;
+        
+        nx += (int)(cl * unitVectorX(cannonDir));
+        ny += (int)(cl * unitVectorY(cannonDir));
+        
+        
+        Missile m = new Missile(nx, ny, cannonDir, power, this.fact);
+        synchronized (MainWindow.weapons) {
+            MainWindow.weapons.add(m);
+        }
+        m.explode();
+    }
+    
+    public void launch(Missile m) {
+        if (isLimited())
+            return;
+        int nx = x, ny = y, cl = CANNON_LEN + 4;
+        nx += (int)(cl * unitVectorX(cannonDir));
+        ny += (int)(cl * unitVectorY(cannonDir));
+        m.setX(nx);
+        m.setY(ny);
+        synchronized (MainWindow.weapons) {
+            MainWindow.weapons.add(m);
+        }
+        m.explode();
+
+    }
+    
     
 	///메인윈도우에서 player의 이름 표시를 위한 dialog
     class Dialog implements Serializable {
