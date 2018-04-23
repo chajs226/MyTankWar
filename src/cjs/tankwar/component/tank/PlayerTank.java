@@ -4,6 +4,7 @@ public class PlayerTank extends Tank{
 	
 	protected int invisibleTime = 0;
 	public int step = 6;
+	private int sk = -1;
 	
 	private final Skill skillList[] = {
 			new Healing();
@@ -20,5 +21,9 @@ public class PlayerTank extends Tank{
                         + skillList[i].toString()
                         + "!  Key <" + SKILL_KEY[i] + ">");
         }
+    }
+    
+    public int getSK() {
+        return sk;
     }
 }

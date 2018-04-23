@@ -3,6 +3,7 @@ package cjs.tankwar.component.tank;
 import static java.awt.Color.*;
 import static xz.tankwar.component.Direction.unitVectorX;
 import static xz.tankwar.component.Direction.unitVectorY;
+import static xz.tankwar.module.PropertiesManager.whiteGreen;
 import static cjs.tankwar.component.Direction.STOP;
 import static cjs.tankwar.component.Direction.erase;
 import static cjs.tankwar.component.Direction.unitVectorX;
@@ -350,6 +351,94 @@ public class Tank extends GameComponent {
 
     }
     
+    //PlayerTank 가 crazy모드이면 색을 변경시킴..
+    protected void drawChassis(Graphics g) {
+        g.setColor(clr2);
+        if (this instanceof PlayerTank && ((PlayerTank)this).getSK() != 0) {
+            if (((PlayerTank)this).crazyTime > 0 && random.nextInt(100) < 50)
+                g.setColor(whiteGreen);
+        }
+        g.fillRoundRect(x - HALF_WIDTH, y - HALF_WIDTH, HALF_WIDTH * 2,
+                HALF_WIDTH * 2, 10, 10);
+    }
+    
+    //미사일 주둥이를 그리는 함수
+    //TODO : UP_RIGHT 등의 Polygon모양으로 그리는 것 확인 필요
+    protected void drawCannon(Graphics g) {
+        int rnd = random.nextInt(100);
+        if (clr3 != null)
+            g.setColor(clr3);
+        else
+            g.setColor(clr1);
+
+        if (this instanceof PlayerTank && ((PlayerTank)this).getSK() != 0) {
+            if (((PlayerTank)this).energeticTime > 0 && rnd < 50)
+                g.setColor(whiteGreen);
+        }
+
+        switch (cannonDir) {
+            case UP:
+                g.fillRect(x - CANNON_R, y - CANNON_LEN,
+                        CANNON_R * 2, CANNON_LEN);
+                break;
+            case DOWN:
+                g.fillRect(x - CANNON_R, y,
+                        CANNON_R * 2, CANNON_LEN);
+                break;
+            case LEFT:
+                g.fillRect(x - CANNON_LEN, y - CANNON_R,
+                        CANNON_LEN, CANNON_R * 2);
+                break;
+            case RIGHT:
+                g.fillRect(x, y - CANNON_R,
+                        CANNON_LEN, CANNON_R * 2);
+                break;
+            case UP_LEFT: {
+                int[] xpoint = { x - 32, x - 25, x, x - 7 }, ypoint = { y - 25,
+                        y - 32, y - 7, y };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+            case UP_RIGHT: {
+                int[] xpoint = { x + 25, x + 32, x + 7, x }, ypoint = { y - 32,
+                        y - 25, y, y - 7 };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+            case DOWN_LEFT: {
+                int[] xpoint = { x - 7, x, x - 25, x - 32 }, ypoint = { y,
+                        y + 7, y + 32, y + 25 };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+            case DOWN_RIGHT: {
+                int[] xpoint = { x, x + 7, x + 32, x + 25 }, ypoint = { y + 7,
+                        y, y + 25, y + 32 };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+        }
+        g.setColor(clr1);
+        if (this instanceof PlayerTank && ((PlayerTank)this).getSK() != 0) {
+            if (((PlayerTank)this).energeticTime > 0 && rnd < 50)
+                g.setColor(whiteGreen);
+        }
+        g.fillOval(x - R, y - R, R * 2, R * 2);
+    }
+    
+    public void drawDialog(Graphics g) {
+        if (dialog != null)
+            dialog.draw(g);
+    }
+
+    public void draw(Graphics g) {
+        drawChassis(g);
+        drawCannon(g);
+    }
+
+    public void speak(String s) {
+        dialog = new Dialog(s);
+    }
     
 	///메인윈도우에서 player의 이름 표시를 위한 dialog
     class Dialog implements Serializable {
