@@ -8,7 +8,7 @@ import java.util.List;
 import cjs.tankwar.component.tank.PlayerTank;
 
 
-//import static¸¦ ÇÏ¸é ÇØ´ç Å¬·¡½ºÀÇ static ¸â¹ö¸¦ fully qualified name ¾øÀÌ »ç¿ëÇÒ¼öÀÖ°Ô ÇÑ´Ù.
+//import staticï¿½ï¿½ ï¿½Ï¸ï¿½ ï¿½Ø´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ static ï¿½ï¿½ï¿½ï¿½ï¿½ fully qualified name ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ò¼ï¿½ï¿½Ö°ï¿½ ï¿½Ñ´ï¿½.
 import static cjs.tankwar.module.ProPertiesManager.*;
 
 public class MainWindow extends Frame{
@@ -59,7 +59,7 @@ public class MainWindow extends Frame{
 		setResizable(false);
 		enableInputMethods(false);
 		
-		//À©µµ¿ì°¡ ÀÌº¥Æ®¸¦ ¹ÞÀ» ¼ö ÀÖ°Ô ÇÔ.
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ì°¡ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½.
 		addWindowListener(new MainWindowAdapter());
 		
 		
@@ -76,13 +76,17 @@ public class MainWindow extends Frame{
             myTank.hintNewSkill(killed);
         }
     }
+    
+    public static int getKilled() {
+        return killed;
+    }
 	
 	/* Listeners */
 	private class MainWindowAdapter extends WindowAdapter {
 		
 		public void windowClosing(windowEvent e) {
 			setVisible(false);
-			//->class ¼±¾ð Console.
+			//->class ï¿½ï¿½ï¿½ï¿½ Console.
 			System.exit(0);
 		}
 		

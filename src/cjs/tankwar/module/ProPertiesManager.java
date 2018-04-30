@@ -1,5 +1,6 @@
 package cjs.tankwar.module;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.Properties;
 
@@ -28,6 +29,27 @@ public class ProPertiesManager {
     public static final Font NAME_FONT;
     public static final Font BUBBLE_FONT;
 	
+    public static final Color lightYellow       = new Color(255, 255, 150);
+    public static final Color iceBlue           = new Color(200, 255, 255);
+    public static final Color lightIceBlue      = new Color(230, 255, 255);
+    public static final Color transparentWhite  = new Color(255, 255, 255, 90);
+    public static final Color transparentGreen  = new Color(0, 255, 0, 20);
+    public static final Color transGreen        = new Color(0, 255, 0, 80);
+    public static final Color purple            = new Color(171, 157, 219);
+    public static final Color darkPurple        = new Color(164, 73, 164);
+    public static final Color lemon             = new Color(181, 230, 29);
+    public static final Color blueGray          = new Color(112, 146, 190);
+    public static final Color brown             = new Color(185, 122, 87);
+    public static final Color darkBrown         = new Color(136, 0, 21);
+    public static final Color lightGreen        = new Color(34, 177, 76);
+    public static final Color transLightGreen   = new Color(34, 177, 76, 80);
+    public static final Color whiteGreen        = new Color(180, 255, 180);
+    public static final Color grayGreen         = new Color(34, 177, 76);
+    public static final Color lightGrayGreen    = new Color(80, 190, 80);
+    public static final Color darkWhiteGreen    = new Color(114, 255, 100);
+    public static final Color gemBlue           = new Color(0, 162, 232);
+    public static final Color lightGemBlue      = new Color(153, 217, 234);
+    
 	static {
 		
         /* Player Name */
