@@ -1,12 +1,18 @@
 package cjs.tankwar.component.tank;
 
-import java.awt.Color;
+
+import java.awt.*;
 import java.awt.Graphics;
 import java.io.Serializable;
 
 import cjs.tankwar.component.Drawable;
 import cjs.tankwar.module.MainWindow;
+import xz.tankwar.component.tank.Tank.Dialog;
+
 import static cjs.tankwar.module.PropertiesManager.*;
+import static xz.tankwar.component.Direction.UP;
+import static xz.tankwar.module.PropertiesManager.grayGreen;
+import static xz.tankwar.module.PropertiesManager.playerName;
 
 public class PlayerTank extends Tank{
 	
@@ -16,7 +22,7 @@ public class PlayerTank extends Tank{
 	protected int energeticTime = 0;
 	
 	private final Skill skillList[] = {
-			new Healing();
+			new Healing(),
             new SummonEnemy(),
             new SetMine(),
             new SummonFriend(),
@@ -29,6 +35,25 @@ public class PlayerTank extends Tank{
             new Earthquake(),
             new LongDistanceShoot(),
 	};
+	
+    /* Constructors */
+    public PlayerTank() {
+        super();
+        clr1 = green;
+        clr2 = grayGreen;
+        maxHP = HP = 1000;
+        maxMP = MP = 1000;
+        x = 400;
+        y = 633;
+        setMoveLimit(UP, 30);
+        dialog = new Dialog("Hello,\nI'm " + playerName + ".");
+
+        if (MainWindow.stat == MainWindow.STAT_START) {
+            x = -x;
+            y = -y;
+        }
+        resetSkillUse();
+    }
 
     public boolean isInvisible() {
         return (invisibleTime != 0);
