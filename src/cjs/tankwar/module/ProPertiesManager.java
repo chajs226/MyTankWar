@@ -95,6 +95,8 @@ public class ProPertiesManager {
         }
 	}
 	
+	private PropertiesManager() {}
+	
     private static String cut(String s) {
         while (s.getBytes().length > MAX_NAME_LENGTH) {
             s = s.substring(0, s.length() - 1);

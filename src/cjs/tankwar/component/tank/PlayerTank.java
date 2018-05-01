@@ -5,14 +5,14 @@ import java.awt.*;
 import java.awt.Graphics;
 import java.io.Serializable;
 
+import static java.awt.Color.*;
+
 import cjs.tankwar.component.Drawable;
 import cjs.tankwar.module.MainWindow;
-import xz.tankwar.component.tank.Tank.Dialog;
+import cjs.tankwar.component.tank.Tank.Dialog;
 
+import static cjs.tankwar.component.Direction.UP;
 import static cjs.tankwar.module.PropertiesManager.*;
-import static xz.tankwar.component.Direction.UP;
-import static xz.tankwar.module.PropertiesManager.grayGreen;
-import static xz.tankwar.module.PropertiesManager.playerName;
 
 public class PlayerTank extends Tank{
 	
