@@ -1,10 +1,24 @@
 package cjs.tankwar.module;
 
+import java.awt.Button;
 import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Properties;
 
-public class ProPertiesManager {
+import cjs.tankwar.module.MainWindow;
+import cjs.tankwar.module.PropertiesManager.NameDialog;
+
+public class PropertiesManager {
 
 	public static final String TITLE = "MyTankWar by CJS";
 	public static final String VERSION = "Version 1.0.0";
@@ -97,10 +111,77 @@ public class ProPertiesManager {
 	
 	private PropertiesManager() {}
 	
+    public static void requestPlayerName() {
+        NameDialog.requestPlayerName();
+    }
+    
+    
     private static String cut(String s) {
         while (s.getBytes().length > MAX_NAME_LENGTH) {
             s = s.substring(0, s.length() - 1);
         }
         return s;
+    }
+    
+    public static class NameDialog extends Dialog {
+        private static NameDialog uniqueNameDialog = new NameDialog();
+        private TextField nameField = new TextField("", MAX_NAME_LENGTH);
+        private Label hint = new Label("Input your name here:");
+        private Button OKButton = new Button("OK!");
+
+        private NameDialog() {
+            super(MainWindow.MW, "Hello, what's your name?", true);
+            setResizable(false);
+            setLocation(MainWindow.MW.getX() + MainWindow.WINDOW_WIDTH / 2 - 125,
+                    MainWindow.MW.getY() + MainWindow.WINDOW_HEIGHT / 2  - 50);
+            setSize(250, 100);
+            
+            setLayout(new FlowLayout());
+            add(hint);
+            add(nameField);
+            add(OKButton);
+            
+            addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    setVisible(false);
+                }
+            });
+            
+            nameField.addTextListener(new TextListener() {
+                public void textValueChanged(TextEvent e) {
+                    String ts = ((TextField)(e.getSource())).getText();
+                    if (ts.getBytes().length > MAX_NAME_LENGTH) {
+                        ts = cut(ts);
+                        ((TextField)(e.getSource())).setText(ts);
+                        ((TextField)(e.getSource())).setCaretPosition(ts.length());
+                    }
+                }
+            });
+            
+            nameField.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ((TextField)(e.getSource())).getParent().setVisible(false);
+                    String ts = ((TextField)(e.getSource())).getText();
+                    if (!ts.equals(""))
+                        playerName = ts;
+                }
+            });
+            OKButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    ((Button)(e.getSource())).getParent().setVisible(false);
+
+                    String ts = ((NameDialog)((Button)e.getSource()).getParent()).nameField.getText();
+                    if (!ts.equals(""));
+                        playerName = ts;
+                }
+            });
+        }
+        
+        static void requestPlayerName() {
+            uniqueNameDialog.nameField.setText(playerName);
+            uniqueNameDialog.nameField.selectAll();
+            uniqueNameDialog.setVisible(true);
+        }
+        
     }
 }
