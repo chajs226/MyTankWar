@@ -123,6 +123,7 @@ public class PropertiesManager {
         return s;
     }
     
+    //TODO: NameDialog 가 뭐하는 클래스인지 확인 필요
     public static class NameDialog extends Dialog {
         private static NameDialog uniqueNameDialog = new NameDialog();
         private TextField nameField = new TextField("", MAX_NAME_LENGTH);
