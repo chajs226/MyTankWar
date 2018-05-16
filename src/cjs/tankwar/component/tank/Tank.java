@@ -45,7 +45,7 @@ public class Tank extends GameComponent {
             255, 150);
     public static final Color DIALOG_FOREGROUND_COLOR = black;
     
-  //움직임방향, 슈팅방향 등으로 초기값 enum STOP으로 설정함
+    //움직임방향, 슈팅방향 등으로 초기값 enum STOP으로 설정함
     protected Direction moveDir = STOP;
     protected Direction shootDir = STOP;
     protected Direction cannonDir = STOP;
@@ -67,6 +67,7 @@ public class Tank extends GameComponent {
     	this.moveDir = moveDir;
     }
     
+    
     public void setShootDir(Direction dir) {
         if (isLimited()) //movetime이 종료되면 슛방향은 설정 못하도록 함
             return;
@@ -81,30 +82,34 @@ public class Tank extends GameComponent {
             this.cannonDir = shootDir;
     }
     
-    public boolean isLimited() {
-        return (moveTimeLimit != 0);
-    }
-    
+    //캐논 방향 설정
     public void setCannonDir(Direction cannonDir) {
         if (cannonDir != STOP)
             this.cannonDir = cannonDir;
-    } 
-
+    }
+    
+    //move 방향 리셋
     public void resetMoveDir(Direction dir) {
         if (isLimited())
             return;
+        //move 방향을 리셋시키고
         moveDir = erase(moveDir, dir);
+        //Shoot방향이 null이거나 지정되어 있지 않으면 움직임의 방향과 같도록 한다.
         if ((shootDir == null || shootDir == STOP) && moveDir != STOP)
             cannonDir = moveDir;
     }
     
+    //Shoot 방향 설정
     public void resetShootDir(Direction dir) {
-        if (isLimited())
+        //movetime이 종료되면 아무것도 안하고 리턴
+    	if (isLimited())
             return;
+    	//dir이 null이면 shoot방향은 stop
         if (dir == null) {
             shootDir = STOP;
             return;
         }
+        //shoot방향이 null이 아니고 stop상태가 아니면..슛방향을 erase시킨 후, cannon방향도 슛방향과 같이 설정
         if (shootDir != null && shootDir != STOP)
             shootDir = erase(shootDir, dir);
         if (shootDir != null && shootDir != STOP)
@@ -123,9 +128,15 @@ public class Tank extends GameComponent {
         return cannonDir;
     }
     
+    //MoveTime 한계를 지정, MoveDir도 dir방향으로 지정
     public void setMoveLimit(Direction dir, int time) {
         moveDirLimit = dir;
         moveTimeLimit = time;
+    }
+    
+    //moveTime 한계가 남아있으면 true를 리턴
+    public boolean isLimited() {
+        return (moveTimeLimit != 0);
     }
     
     public int getPower() {
