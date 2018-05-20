@@ -22,6 +22,9 @@ import cjs.tankwar.component.GameComponent;
 import cjs.tankwar.component.tank.Tank;
 import cjs.tankwar.module.ConsoleWindow;
 import cjs.tankwar.module.MainWindow;
+import xz.tankwar.component.supply.Accelerator;
+import xz.tankwar.component.supply.HealPack;
+import xz.tankwar.component.supply.MagicStone;
 import cjs.tankwar.component.tank.Tank.Dialog;
 import cjs.tankwar.component.weapon.Missile;
 import cjs.tankwar.component.tank.ComTank;
@@ -218,13 +221,14 @@ public class Tank extends GameComponent {
         return false;
     }
     
-    //TODO :  Direction 로직확인 해야 이해가능   
+    //TODO :  Direction 로직확인 해야 이해가능 . 기능을 모르겠음;  
     void shift(Direction dir, int step) {
     x += (int)(step * unitVectorX(dir));
     y += (int)(step * unitVectorY(dir));
     
     }
 
+    //강제로 파라미터값으로 이동시킴. STOP상태이면 움직이지 않고 그냥 리턴함
     public void forceMove(Direction dir, int step) {
         moveDir = dir;
         if (moveDir == STOP)
@@ -235,6 +239,7 @@ public class Tank extends GameComponent {
         y += (int)(step * unitVectorY(dir));
     }
 
+    //이동함수. 탱크가 crazy모드이거나 Invisible상태이면 forceMove 시킴.
     public void move(Direction dir, int step) {
         if (this instanceof PlayerTank
                 && (((PlayerTank)this).isInvisible()
@@ -289,6 +294,29 @@ public class Tank extends GameComponent {
             explode(); 
         }
         energyBarLastTime = 100;
+    }
+    
+    void dropItem(int prob) {
+        int rnd = random.nextInt(100);
+        if (rnd < prob) {
+            synchronized (MainWindow.supplies) {
+                MainWindow.supplies.add(new HealPack(x, y));
+            }
+            return;
+        }
+        if (rnd < prob * 2) {
+            synchronized (MainWindow.supplies) {
+                MainWindow.supplies.add(new MagicStone(x, y));
+            }
+            return;
+        }
+        if (rnd < prob * 3) {
+            synchronized (MainWindow.supplies) {
+                MainWindow.supplies.add(new Accelerator(x, y));
+            }
+            return;
+        }
+
     }
     
     public void modifyHP(int dlt) {
