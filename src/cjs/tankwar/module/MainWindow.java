@@ -1,15 +1,23 @@
 package cjs.tankwar.module;
 
+
+import static cjs.tankwar.module.PropertiesManager.*;
+
+
 import java.awt.Frame;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.Console;
 import java.util.List;
+import java.util.Random;
 
-import cjs.tankwar.component.tank.PlayerTank;
 
 
-//import static�� �ϸ� �ش� Ŭ������ static ����� fully qualified name ���� ����Ҽ��ְ� �Ѵ�.
-import static cjs.tankwar.module.ProPertiesManager.*;
+//import cjs.tankwar.component.tank.PlayerTank;
+
+
 
 public class MainWindow extends Frame{
 
@@ -32,13 +40,19 @@ public class MainWindow extends Frame{
     public static boolean showConsole = true;
     
     public static int stat = 0;
+
+    //TODO : ComTank, Weapon
+    //public static PlayerTank myTank = null;
+//    public static List<ComTank> tanks = null;
+//    public static List<ComTank> friends = null;
+//    public static List<Weapon> weapons = null;
+//    public static List<Weapon> supplies = null;
+//    public static List<Weapon> explosions = null;
     
-    public static PlayerTank myTank = null;
-    public static List<ComTank> tanks = null;
-    public static List<ComTank> friends = null;
-    public static List<Weapon> weapons = null;
-    public static List<Weapon> supplies = null;
-    public static List<Weapon> explosions = null;
+    /* Threads */
+    static Thread gameRunThread = null;
+    //TODO : AbstractWaveTankGenerator
+    //public static AbstractWaveTankGenerator waveGen = null; 
     
     /* Statistics */
     private static int killed;
@@ -48,48 +62,34 @@ public class MainWindow extends Frame{
     static boolean valid = true;
     
 	/* Others */
-	public static ConsoleWindow ConSole = ConsoleWindow.console;
+	//public static ConsoleWindow ConSole = ConsoleWindow.console;
 	public static final MainWindow MW = new MainWindow();
 
+    Random random = new Random();
+    public static int freezed = 0;
+    public static int shake = 0;
+    static int HPreg = 2; /* 20 per second */
+    static int MPreg = 3; /* 30 per second */
+    
 	/* Constructor */
 	private MainWindow() {
-		
-		setTitle(TITLE + " " + VERSION);
-		setBounds(X, Y, WINDOW_WIDTH, WINDOW_HEIGHT);
-		setResizable(false);
-		enableInputMethods(false);
-		
-		//�����찡 �̺�Ʈ�� ���� �� �ְ� ��.
-		addWindowListener(new MainWindowAdapter());
-		
-		
+			
 	}
 	
-    /* Game Control Methods */
-    public static void addKilled() {
-        if (stat != STAT_GAME)
-            return;
-        synchronized (killedLock) {
-            ++killed;
-            if (killed == 1000)
-                myTank.speak("Thousand Killed.");
-            myTank.hintNewSkill(killed);
-        }
-    }
-    
-    public static int getKilled() {
-        return killed;
+    /* Main */
+    public static void main(String args[]) {
+        if (args.length != 0)
+            if (args[0].startsWith("-")) {
+                if (args[0].contains("s"))
+                    ENABLE_SAVE = true;
+                if (args[0].contains("d"))
+                    DEBUG = true;
+                if (args[0].contains("c"));
+              //TODO: RanklistManager
+                //if (args[0].contains("r"))                	
+                    //RanklistManager.clearRanklist();
+            }
     }
 	
-	/* Listeners */
-	private class MainWindowAdapter extends WindowAdapter {
-		
-		public void windowClosing(windowEvent e) {
-			setVisible(false);
-			//->class ���� Console.
-			System.exit(0);
-		}
-		
-	}
 	
 }

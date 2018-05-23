@@ -1,3 +1,4 @@
+/*
 package cjs.tankwar.module;
 
 import java.awt.Color;
@@ -46,7 +47,7 @@ public class ConsoleWindow extends Frame{
                 MainWindow.MW.toFront();
             }
 
-            //iconfied ´Â minimized formÀÇ ÀÇ¹Ì.
+            //iconfied ï¿½ï¿½ minimized formï¿½ï¿½ ï¿½Ç¹ï¿½.
             public void windowDeiconified(WindowEvent e) {
                 MainWindow.MW.setState(NORMAL);
             }
@@ -139,3 +140,4 @@ public class ConsoleWindow extends Frame{
 	    }
 	 
 }
+*/

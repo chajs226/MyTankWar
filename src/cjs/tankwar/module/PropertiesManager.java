@@ -31,6 +31,9 @@ public class PropertiesManager {
     public static final int MAX_NAME_LENGTH = 15;
     public static String playerName = null;
     
+    public static boolean DEBUG = false;
+    public static boolean ENABLE_SAVE = true;
+    
     public static final String SAVE_FILE_NAME;
     public static final String RANKLIST_FILE_NAME;
     

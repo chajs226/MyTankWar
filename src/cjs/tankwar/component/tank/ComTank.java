@@ -1,3 +1,4 @@
+/*
 package cjs.tankwar.component.tank;
 
 import java.awt.*;
@@ -21,7 +22,7 @@ public class ComTank extends Tank implements Automatic {
 
     protected TankActionStrategy strategy = new NormalActionStrategy(this, 60);
 
-    /* Constructors */
+
     public ComTank(int _x, int _y, Color _clr1, Color _clr2, int _fact) {
         x = _x;
         y = _y;
@@ -166,7 +167,7 @@ public class ComTank extends Tank implements Automatic {
             moveTimeLimit += 30;
     }
     
-    /* Actions */
+
     public void explode() {
         super.explode();
         if (tag == SOY_SAUCE)
@@ -220,7 +221,7 @@ public class ComTank extends Tank implements Automatic {
 
     }
 
-    /* Draw */
+
     public void drawEnergyBar(Graphics g) {
         g.setColor(red);
         if (HP > 0)
@@ -246,7 +247,7 @@ public class ComTank extends Tank implements Automatic {
 
     }
     
-    /* Getters & Setters */
+
     public int getStep() {
         return step;
     }
@@ -260,3 +261,4 @@ public class ComTank extends Tank implements Automatic {
     }
 
 }
+*/

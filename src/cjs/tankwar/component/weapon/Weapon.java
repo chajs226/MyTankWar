@@ -1,3 +1,4 @@
+/*
 package cjs.tankwar.component.weapon;
 
 import java.awt.*;
@@ -14,3 +15,4 @@ public abstract class Weapon extends GameComponent implements Automatic {
 		
 	}
 }
+*/

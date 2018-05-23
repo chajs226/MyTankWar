@@ -1,3 +1,4 @@
+/*
 package cjs.tankwar.component.tank;
 
 
@@ -36,7 +37,7 @@ public class PlayerTank extends Tank{
             new LongDistanceShoot(),
 	};
 	
-    /* Constructors */
+
     public PlayerTank() {
         super();
         clr1 = green;
@@ -120,3 +121,4 @@ public class PlayerTank extends Tank{
     	
     }
 }
+*/

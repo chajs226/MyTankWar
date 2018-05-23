@@ -1,3 +1,4 @@
+/*
 package cjs.tankwar.component.tank;
 
 import static java.awt.Color.*;
@@ -568,3 +569,4 @@ public class Tank extends GameComponent {
         }
     }
 }
+*/
