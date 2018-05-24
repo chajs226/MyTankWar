@@ -73,6 +73,7 @@ public abstract class GameComponent implements Drawable, Serializable {
         return Math.sqrt(Math.pow(g.x - x, 2) + Math.pow(g.y - y, 2));
     }
 	
+    //스크린 안에 있는지 체크하는 메소드
     public boolean inScreen() {
     	return !(x < -10 || x > MainWindow.WINDOW_WIDTH + 10 || y < -10 || y > MainWindow.WINDOW_HEIGHT + 10);
     	

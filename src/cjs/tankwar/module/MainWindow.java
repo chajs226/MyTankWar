@@ -2,9 +2,6 @@ package cjs.tankwar.module;
 
 
 import static cjs.tankwar.module.PropertiesManager.*;
-import static xz.tankwar.component.tank.ComTank.ComTankType.ENEMY;
-import static xz.tankwar.component.tank.ComTank.ComTankType.FAKE_PLAYER;
-import static xz.tankwar.component.tank.ComTank.ComTankType.FRIEND;
 
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;
@@ -14,10 +11,6 @@ import java.awt.event.WindowEvent;
 import java.io.Console;
 import java.util.List;
 import java.util.Random;
-
-import xz.tankwar.component.tank.ComTank;
-import xz.tankwar.module.MainWindow.MainKeyAdapter;
-
 
 
 //import cjs.tankwar.component.tank.PlayerTank;
