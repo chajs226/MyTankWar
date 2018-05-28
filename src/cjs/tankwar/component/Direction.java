@@ -96,7 +96,8 @@ public enum Direction implements Serializable{
         return 0.0;
     }
     
-    //TODO: 방향을 조합해서 결정하는건데.. 마지막 2개의 비트연산은 왜하는건지?
+    //TODO: 1111 비트 각 자리가 up, left, down, right 값임.
+    // compose, erase 잘모르겠음
     public static Direction compose(Direction base, Direction dir) {
         int b = base.value, d = dir.value;
         b |= d;
@@ -110,12 +111,15 @@ public enum Direction implements Serializable{
         return forDirection(b);
     }
     
+    //base의 방향이 dir 방향의 속성(up,right,left,down)을 포함하고 있으면..true를 리턴. 
+    //움직이고자 하는 방향을 기본 base 방향이 가지고 있는가를 판단
     public static boolean includes(Direction base, Direction dir) {
         return (base.value & dir.value) == dir.value;
     }
     public boolean includes(Direction dir) {
         return (this.value & dir.value) == dir.value;
     }
+    //value의 1비트 갯수가 몇개인가?
     public int dimension() {
         return Integer.bitCount(this.value);
     }

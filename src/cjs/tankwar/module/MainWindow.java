@@ -3,6 +3,8 @@ package cjs.tankwar.module;
 
 import static cjs.tankwar.module.PropertiesManager.*;
 
+
+
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -11,6 +13,8 @@ import java.awt.event.WindowEvent;
 import java.io.Console;
 import java.util.List;
 import java.util.Random;
+import cjs.tankwar.component.*;
+import static cjs.tankwar.component.Direction.*;
 
 
 //import cjs.tankwar.component.tank.PlayerTank;
@@ -80,7 +84,7 @@ public class MainWindow extends Frame{
         //메인 윈도우 창에 대한 이벤트를 받는 리스너
         addWindowListener(new MainWindowAdapter());
         //TODO: 키보드 input 키에 대한 리스너 등록
-        //addKeyListener(new MainKeyAdapter());
+        addKeyListener(new MainKeyAdapter());
         
         //TODO: gameRestart. 게임 속 캐릭터 등의 객체를 clear하고 재생성
         //gameRestart();
@@ -137,6 +141,36 @@ public class MainWindow extends Frame{
         public void windowDeiconified(WindowEvent e) {
             //Console.setState(NORMAL);
         }
+    }
+    
+    private class MainKeyAdapter extends KeyAdapter {
+    	
+    	//key가 눌러지면.. System.currentTimeMillis(); 값이 assign된다. 값을 비교함으로 해서,
+    	//최근에 눌러진 값에 따라 dir 방향이 정해진다.
+        private long pressedW = 0;
+        private long pressedA = 0;
+        private long pressedS = 0;
+        private long pressedD = 0;
+        private long pressedQ = 0;
+        private long pressedUp = 0;
+        private long pressedDown = 0;
+        private long pressedLeft = 0;
+        private long pressedRight = 0;
+        
+        private void locateMoveDirection() {
+            Direction dir = STOP;
+            if (pressedUp > pressedDown)
+                dir = compose(dir, UP);
+            if (pressedUp < pressedDown)
+                dir = compose(dir, DOWN);
+            if (pressedLeft > pressedRight)
+                dir = compose(dir, LEFT);
+            if (pressedLeft < pressedRight)
+                dir = compose(dir, RIGHT);
+            //TODO:mytank 이동시킴
+            //myTank.setMoveDir(dir);
+        }
+        
     }
 	
     /* Main */
