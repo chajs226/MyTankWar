@@ -39,11 +39,14 @@ public enum Direction implements Serializable{
         return null;
     }
     
-    //TODO : 회전.. x값에 따라.. 변화되는 direction을 리턴하는데.. 정확한 원리는 추후에 확인필요
+    //회전.. dir값이 STOP이면 STOP을 리턴하고, 
+    //STOP이 아니면 dir과 x를 더해서 8로 나눈 나머지의 DIRECTIONS배열값을 리턴한다.
+    //기존의 dir방향에서 x 값이 들어왔을 때,, 배열 인덱스를 조정해서 rotate된 값을 리턴함
     public static Direction rotate(Direction dir, int x) {
         if (dir == STOP)
             return STOP;
         int ord;
+        //Directions.lenght = 8
         for (ord = 0; ord < DIRECTIONS.length; ++ord)
             if (dir == DIRECTIONS[ord])
                 break;
@@ -67,7 +70,8 @@ public enum Direction implements Serializable{
      * dir.value의 값의 1비트 갯수가 2개이면 len은 1/루트2 의 몫
      * dir.value가 UP.value
      */
-    //TODO : 아래의 방향에 대한 로직은 추후 확인. 어렵다;;
+    // dir 방향이 주어졌을 때, X로 이동할 단위 값을 리턴함.
+    // - left나 ,right라면 1또는 -1을 리턴.. 대각선일 때는 1/루트2 값을 +- 로 리턴
     public static double unitVectorX(Direction dir) {
         double len = 1.0;
         if (Integer.bitCount(dir.value) == 2)
@@ -79,6 +83,8 @@ public enum Direction implements Serializable{
         return 0.0;
     }
     
+    // dir 방향이 주어졌을 때, Y로 이동할 단위 값을 리턴함.
+    // - Up나 ,Down라면 1또는 -1을 리턴.. 대각선일 때는 1/루트2 값을 +- 로 리턴
     public static double unitVectorY(Direction dir) {
         double len = 1.0;
         if (Integer.bitCount(dir.value) == 2)
@@ -90,6 +96,7 @@ public enum Direction implements Serializable{
         return 0.0;
     }
     
+    //TODO: 방향을 조합해서 결정하는건데.. 마지막 2개의 비트연산은 왜하는건지?
     public static Direction compose(Direction base, Direction dir) {
         int b = base.value, d = dir.value;
         b |= d;
