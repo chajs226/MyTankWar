@@ -2,7 +2,7 @@ package cjs.tankwar.module;
 
 
 import static cjs.tankwar.module.PropertiesManager.*;
-
+import java.awt.event.*;
 
 
 import java.awt.Frame;
@@ -14,7 +14,9 @@ import java.io.Console;
 import java.util.List;
 import java.util.Random;
 import cjs.tankwar.component.*;
+
 import static cjs.tankwar.component.Direction.*;
+import static java.awt.event.KeyEvent.*;
 
 
 //import cjs.tankwar.component.tank.PlayerTank;
@@ -157,6 +159,7 @@ public class MainWindow extends Frame{
         private long pressedLeft = 0;
         private long pressedRight = 0;
         
+        //키값 변수가 가지고 있는 값에 따라서 방향을 재설정한다.
         private void locateMoveDirection() {
             Direction dir = STOP;
             if (pressedUp > pressedDown)
@@ -167,11 +170,225 @@ public class MainWindow extends Frame{
                 dir = compose(dir, LEFT);
             if (pressedLeft < pressedRight)
                 dir = compose(dir, RIGHT);
-            //TODO:mytank 이동시킴
+            //TODO:mytank 방향변경
             //myTank.setMoveDir(dir);
         }
         
+        //키값 변수가 가지고 있는 값에 따라서 슛 방향을 재설정한다.
+        private void locateShootDirection() {
+            if (pressedQ > pressedW && pressedQ > pressedA
+                    && pressedQ > pressedS && pressedQ > pressedD) {
+                //TODO: myTank 슛 방향 변경
+            	//myTank.setShootDir(null);
+                //myTank.setCannonDir(myTank.getMoveDir());
+                return;
+            }
+            Direction dir = STOP;
+            if (pressedW > pressedS)
+                dir = compose(dir, UP);
+            if (pressedW < pressedS)
+                dir = compose(dir, DOWN);
+            if (pressedA > pressedD)
+                dir = compose(dir, LEFT);
+            if (pressedA < pressedD)
+                dir = compose(dir, RIGHT);
+            //TODO: myTank 슛 방향 변경
+            //myTank.setShootDir(dir);
+        }
+        
+        private void resetKey() {
+            pressedW = 0;
+            pressedA = 0;
+            pressedS = 0;
+            pressedD = 0;
+            pressedQ = 0;
+            pressedUp = 0;
+            pressedDown = 0;
+            pressedLeft = 0;
+            pressedRight = 0;
+          //TODO: myTank 방향 Reset
+            //myTank.setShootDir(STOP);
+            //myTank.setMoveDir(STOP);
+        }
+        
+        private void helpingKeyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case VK_SPACE:
+                case VK_ENTER:
+                case VK_F1:
+                    stat = STAT_GAME;
+                    resetKey();
+                    gameResume();
+                    break;
+                case VK_F4:
+                    showConsole = !showConsole;
+                    //TODO:ConsoleWindow 구현
+                    //ConsoleWindow.console.setVisible(showConsole);
+                    break;
+            }
+
+        }
+        
+        private void gameKeyPressed(KeyEvent e) {
+        	//ConsoleWindow.println("" + e.getKeyCode());
+            switch (e.getKeyCode()) {
+                case VK_F1: /* Help */
+                    gamePause();
+                    repaint();
+                    stat = STAT_HELP;
+                    break;
+                case VK_F2: /* Restart */
+                    //gameRestart();
+                    break;
+                case VK_F4:
+                    showConsole = !showConsole;
+                    //TODO :
+                    //ConsoleWindow.console.setVisible(showConsole);
+                    break;
+                case VK_ESCAPE:
+                case VK_P:
+                    gamePause();
+                    break;
+                case VK_UP:
+                    pressedUp = System.currentTimeMillis();
+                    break;
+                case VK_DOWN:
+                    pressedDown = System.currentTimeMillis();
+                    break;
+                case VK_LEFT:
+                    pressedLeft = System.currentTimeMillis();
+                    break;
+                case VK_RIGHT:
+                    pressedRight = System.currentTimeMillis();
+                    break;
+                case VK_W:
+                    pressedW = System.currentTimeMillis();
+                    break;
+                case VK_S:
+                    pressedS = System.currentTimeMillis();
+                    break;
+                case VK_A:
+                    pressedA = System.currentTimeMillis();
+                    break;
+                case VK_D:
+                    pressedD = System.currentTimeMillis();
+                    break;
+                case VK_Q:
+                    pressedQ = System.currentTimeMillis();
+                    break;
+                case VK_BACK_QUOTE: /* Healing */
+                    //TODO
+                	//myTank.setSK(0);
+                    break;
+                case VK_1: /* Summon Enemy */
+                	//TODO
+                    //myTank.setSK(1);
+                    break;
+                case VK_2: /* Set Mine */
+                	//TODO
+                	//myTank.setSK(2);
+                    break;
+                case VK_3: /* Summon Friend */
+                	//TODO
+                	//myTank.setSK(3);
+                    break;
+                case VK_E: /* All Directions Shoot */
+                	//TODO
+                	//myTank.setSK(4);
+                    break;
+                case VK_F: /* Dash */
+                	//TODO
+                	//myTank.setSK(5);
+                    break;
+                case VK_X: /* Become Invisible */
+                	//TODO
+                	//myTank.setSK(6);
+                    break;
+                case VK_R: /* Line Shoot */
+                	//TODO
+                	//myTank.setSK(7);
+                    break;
+                case VK_C: /* Big Explosion */
+                	//TODO
+                	//myTank.setSK(8);
+                    break;
+                case VK_Z: /* Ice Age */
+                	//TODO
+                	//myTank.setSK(9);
+                    break;
+                case VK_V: /* Earthquake */
+                	//TODO
+                	//myTank.setSK(10);
+                    break;
+                case VK_SPACE: /* Long Distance Shoot */
+                    if (DEBUG)
+                    	//TODO
+                    	//myTank.setSK(11);
+                    break;
+                case VK_F11:
+                    if (ENABLE_SAVE)
+                    	//TODO
+                    	//ArchiveManager.saveGame();
+                    break;
+                case VK_F12:
+                    if (ENABLE_SAVE)
+                    	//TODO
+                    	//ArchiveManager.loadGame();
+                    break;
+                default:
+                    if (DEBUG)
+                    	//TODO
+                    	//debugKeyPressed(e);
+                    break;
+            }
+            locateMoveDirection();
+            locateShootDirection();
+
+        }
+        
+        //키이벤트를 받을 때, 게임이 어떤상태인지를 판단해서 그에 따른 키 이벤트를 발생시킨다.
+        public void keyPressed(KeyEvent e) {
+            switch (stat) {
+                case STAT_GAME:
+                    gameKeyPressed(e);
+                    break;
+                case STAT_HELP:
+                    helpingKeyPressed(e);
+                    break;
+                case STAT_START:
+                    //startingKeyPressed(e);
+                    break;
+                case STAT_PAUSE:
+                    //pausingKeyPressed(e);
+                    break;
+                case STAT_OVER:
+                    //overKeyPressed(e);
+                    break;
+                case STAT_RANKLIST:
+                    //ranklistKeyPressed(e);
+                    break;
+            }
+        }
+        
     }
+    
+    //TODO : 일단 skip
+    void gameResume() {
+        stat = STAT_GAME;
+        //newThreads();
+        //startThreads();
+    }
+    
+    //게임을 멈춤.
+    void gamePause() {
+        if (stat != STAT_GAME)
+            return;
+        gameRunThread = null;
+        stat = STAT_PAUSE;
+        repaint();
+    }
+    
+
 	
     /* Main */
     public static void main(String args[]) {
