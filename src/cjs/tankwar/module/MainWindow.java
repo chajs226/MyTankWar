@@ -346,7 +346,40 @@ public class MainWindow extends Frame{
 
         }
         
-        //키이벤트를 받을 때, 게임이 어떤상태인지를 판단해서 그에 따른 키 이벤트를 발생시킨다.
+        private void startingKeyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case VK_F1:
+                    stat = STAT_HELP;
+                    break;
+                case VK_F2: /* Restart */
+                    stat = STAT_GAME;
+                    resetKey();
+                    //TODO : 게임 restart 처리
+                    //gameRestart();
+                    break;
+                case VK_F4:
+                    showConsole = !showConsole;
+                    //TODO : 콘솔윈도우 구현
+                    //ConsoleWindow.console.setVisible(showConsole);
+                    break;
+                case VK_ENTER:
+                    stat = STAT_HELP;
+                    //TODO : 게임리스타트
+                    //gameRestart();
+                    stat = STAT_HELP;
+                    break;
+                case VK_F12:
+                    stat = STAT_GAME;
+                    //TODO : Archive 기록 관련 구현
+                    //ArchiveManager.loadGame();
+                    break;
+                case VK_F3:
+                    requestPlayerName();
+                    break;
+            }
+        }
+        
+        //키 이벤트를 받을 때, 게임이 어떤상태인지를 판단해서 그에 따른 키 이벤트를 발생시킨다.
         public void keyPressed(KeyEvent e) {
             switch (stat) {
                 case STAT_GAME:
@@ -356,7 +389,7 @@ public class MainWindow extends Frame{
                     helpingKeyPressed(e);
                     break;
                 case STAT_START:
-                    //startingKeyPressed(e);
+                    startingKeyPressed(e);
                     break;
                 case STAT_PAUSE:
                     //pausingKeyPressed(e);
