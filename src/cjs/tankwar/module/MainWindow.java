@@ -17,8 +17,6 @@ import cjs.tankwar.component.*;
 
 import static cjs.tankwar.component.Direction.*;
 import static java.awt.event.KeyEvent.*;
-
-
 //import cjs.tankwar.component.tank.PlayerTank;
 
 
@@ -108,6 +106,10 @@ public class MainWindow extends Frame{
 //        }
         stat = STAT_START;
         
+        //GameRunThread 생성
+        newThreads();
+        //GameRunThread.run 실행
+        startThreads();
         
         //TODO: Console 화면
         //Console.setVisible(true);
@@ -115,6 +117,45 @@ public class MainWindow extends Frame{
   
 	}
 	
+    private void newThreads() {
+        gameRunThread = new GameRunThread();
+
+    }
+    
+    //gameRunThread.start 함수를 호출하면 GameRunThread 클래스의 run 함수가 호출된다. 
+    //(Thread 클래스의 자식 클래스) 
+    private void startThreads() {
+        gameRunThread.start();
+    }
+	
+    private class GameRunThread extends Thread {
+        private long threadStartTime = 0;
+        private Long millisRefreshTime = 0l;
+        private Long millisRefreshInterval = 0l;
+        private long loopCount = 0L;
+    	
+        public long getMillisRefreshInterval() {
+            return millisRefreshInterval;
+        }
+        
+        //Automatic을 상속받는 모든 객체들.. tank, weapon 등이 죽어있으면.. 리스트에서 지우고
+        //살아있으면 각 객체에서 구현한 autoAct를 실행한다. 각 객체의 특징에 맞게 AutoAct를 위한 구현이 되어 있다
+        private void actAll(List c) {
+            for (int i = 0; i < c.size(); ++i) {
+                if (!((Automatic)(c.get(i))).isAlive())
+                    c.remove(i);
+                else
+                    ((Automatic)(c.get(i))).autoAct();
+            }
+        }
+        
+        public void run() {
+        	
+        }
+        
+        
+    }
+    
     private class MainWindowAdapter extends WindowAdapter {
         
     	//윈도우 창의 X버튼 클릭 시, 화면 종료 시킴
@@ -379,6 +420,78 @@ public class MainWindow extends Frame{
             }
         }
         
+        private void pausingKeyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case VK_ENTER:
+                case VK_ESCAPE:
+                case VK_P:
+                    resetKey();
+                    gameResume();
+                    break;
+                case VK_F4:
+                    showConsole = !showConsole;
+                    //TODO:콘솔구현
+                    //ConsoleWindow.console.setVisible(showConsole);
+                    break;
+                case VK_F11:
+                    if (ENABLE_SAVE)
+                    	//TODO:기록구현
+                        //ArchiveManager.saveGame();
+                    break;
+                case VK_F12:
+                    if (ENABLE_SAVE) {
+                    	//TODO:기록구현
+                        //ArchiveManager.loadGame();
+                        resetKey();
+                        gameResume();
+                    }
+                    break;
+            }
+        }
+        
+        private void overKeyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case VK_ALT:
+                case VK_CONTROL:
+                    break;
+                case VK_F4:
+                    showConsole = !showConsole;
+                    //ConsoleWindow.console.setVisible(showConsole);
+                    break;
+                case VK_ENTER:
+                    if (valid)
+                        //RanklistManager.insertRecord(playerName, killed, gameID);
+                    stat = STAT_RANKLIST;
+                    break;
+
+            }
+        }
+        
+        private void ranklistKeyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case VK_ALT:
+                case VK_CONTROL:
+                    break;
+                case VK_F3:
+                    requestPlayerName();
+                    break;
+                case VK_F4:
+                    showConsole = !showConsole;
+                    //ConsoleWindow.console.setVisible(showConsole);
+                    break;
+                case VK_ENTER:
+                    stat = STAT_GAME;
+                    resetKey();
+                    //gameRestart();
+                    break;
+                default:
+                    stat = STAT_GAME;
+                    resetKey();
+                    //gameRestart();
+
+            }
+        }
+        
         //키 이벤트를 받을 때, 게임이 어떤상태인지를 판단해서 그에 따른 키 이벤트를 발생시킨다.
         public void keyPressed(KeyEvent e) {
             switch (stat) {
@@ -392,20 +505,70 @@ public class MainWindow extends Frame{
                     startingKeyPressed(e);
                     break;
                 case STAT_PAUSE:
-                    //pausingKeyPressed(e);
+                    pausingKeyPressed(e);
                     break;
                 case STAT_OVER:
-                    //overKeyPressed(e);
+                    overKeyPressed(e);
                     break;
                 case STAT_RANKLIST:
-                    //ranklistKeyPressed(e);
+                    ranklistKeyPressed(e);
                     break;
             }
+        }
+        
+        //키를 땠을 때, 발생하는 이벤트
+        public void keyReleased(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case VK_UP:
+                    pressedUp = 0;
+                    break;
+                case VK_DOWN:
+                    pressedDown = 0;
+                    break;
+                case VK_LEFT:
+                    pressedLeft = 0;
+                    break;
+                case VK_RIGHT:
+                    pressedRight = 0;
+                    break;
+                case VK_W:
+                    pressedW = 0;
+                    break;
+                case VK_S:
+                    pressedS = 0;
+                    break;
+                case VK_A:
+                    pressedA = 0;
+                    break;
+                case VK_D:
+                    pressedD = 0;
+                    break;
+                case VK_Q:
+                    pressedQ = 0;
+                    break;
+                case VK_BACK_QUOTE:
+                case VK_1:
+                case VK_2:
+                case VK_3:
+                case VK_E:
+                case VK_R:
+                case VK_F:
+                case VK_C:
+                case VK_X:
+                case VK_Z:
+                case VK_V:
+                case VK_SPACE:
+                    //myTank.setSK(-1);
+                    break;
+            }
+            locateMoveDirection();
+            locateShootDirection();
         }
         
     }
     
     //TODO : 일단 skip
+    //게임 시작전 생타로 돌리고 스레드를 발생시킨다.
     void gameResume() {
         stat = STAT_GAME;
         //newThreads();
