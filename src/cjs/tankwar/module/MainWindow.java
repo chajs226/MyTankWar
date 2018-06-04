@@ -150,6 +150,24 @@ public class MainWindow extends Frame{
         }
         
         public void run() {
+        	threadStartTime = System.currentTimeMillis();
+        	setPriority(MAX_PRIORITY);
+        	while (MainWindow.gameRunThread == this) {
+        		//아래의 로직을 계속 돌리는데,, refresh 인터벌시간(20 ms) 내에 한번 돌렸으면 수행을 안하고,, 
+        		//그 시간이 넘어갔으면 다시 수행한다.
+        		if (threadStartTime + loopCount * REFRESH_INTERVAL < System.currentTimeMillis()) {
+        			++loopCount;
+        			millisRefreshInterval = System.currentTimeMillis() - millisRefreshTime;
+        			millisRefreshTime = System.currentTimeMillis();
+        			//Game Run
+        			//TODO: 
+        			// 1. myTank 를 움직인다.
+        			// 2. firends, tanks, supplies, weapos, explosions 를 act한다.
+        			// 3. loopCount 5번째마다, HP, MP, useSkill
+        			// 4. MP값이나 여러값을 고려해서,, skill 을 stop처리. 혹은 skill use 처리하는듯
+        			// 5. mytank 슛방향이 널이 아니면 launch시킴
+        		}
+        	}
         	
         }
         
