@@ -1,3 +1,70 @@
+package cjs.tankwar.component.tank;
+
+import static java.awt.Color.*;
+
+import java.awt.*;
+import java.awt.Graphics;
+
+import cjs.tankwar.component.Direction;
+import cjs.tankwar.component.GameComponent;
+import static cjs.tankwar.component.Direction.*;
+
+public class Tank extends GameComponent {
+
+    public static final int R = 18, HALF_WIDTH = 22, STEP = 4, CANNON_R = 5,
+            CANNON_LEN = 35;
+    public static final int SHOOT_CD = 70;
+    static final int EXPLOSION_R[] = { 15, 25, 30, 45, 35 };
+
+    public static final int DIALOG_BORDER_WIDTH = 5;
+    public static final int DIALOG_ARROW_WIDTH = 7;
+    public static final Color DIALOG_BACKGROUND_COLOR = new Color(255, 255,
+            255, 150);
+    public static final Color DIALOG_FOREGROUND_COLOR = black;
+    
+    //탱크 움직임 방향 
+    protected Direction moveDir = STOP;
+    //탱크의 포 움직임 방향
+    protected Direction shootDir = STOP;
+    //TODO:??
+    protected Direction cannonDir = STOP;
+    protected int power = 50;
+    protected int HP;
+    protected int maxHP;
+    public long blockTime = 0;
+    protected boolean ignoreMoveLimit = false;
+    protected int energyBarLastTime = 0;
+    protected Color clr1 = gray;
+    protected Color clr2 = black;
+    protected Color clr3 = null;
+    protected Dialog dialog = null;
+
+    protected Direction moveDirLimit = STOP;
+    protected int moveTimeLimit = 0;
+    
+    
+    public void setMoveDir(Direction moveDir) {
+        this.moveDir = moveDir;
+    }
+    
+    
+    
+	public void draw(Graphics g) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
 /*
 package cjs.tankwar.component.tank;
 
