@@ -7,6 +7,8 @@ import java.awt.Graphics;
 
 import cjs.tankwar.component.Direction;
 import cjs.tankwar.component.GameComponent;
+import cjs.tankwar.module.MainWindow;
+
 import static cjs.tankwar.component.Direction.*;
 
 public class Tank extends GameComponent {
@@ -32,6 +34,7 @@ public class Tank extends GameComponent {
     protected int HP;
     protected int maxHP;
     public long blockTime = 0;
+    //ignoreMoveLimit 가 true이면 탱크가 메인 윈도우 밖을 나갈 수 있다. false이면 못나간다.
     protected boolean ignoreMoveLimit = false;
     protected int energyBarLastTime = 0;
     protected Color clr1 = gray;
@@ -59,12 +62,12 @@ public class Tank extends GameComponent {
         this.shootDir = dir;
         if (shootDir == null)
             shootDir = STOP;
-        //shootDir이 널이거나 스탑이 아니면.. 미사일의 방향도 shootDir과 같이 셋팅한다.
+        //미사일방향이 널이거나 스탑이 아니면.. 포의 방향도 미사일방향과 같이 셋팅한다.
         if (shootDir != null && shootDir != STOP)
             this.cannonDir = shootDir;
     }
     
-    //미사일의 방향을 설정하는 함수
+    //포의 방향을 설정하는 함수
     public void setCannonDir(Direction cannonDir) {
         if (cannonDir != STOP)
             this.cannonDir = cannonDir;
@@ -79,7 +82,7 @@ public class Tank extends GameComponent {
             cannonDir = moveDir;
     }
     
-    //Shoot 방향을 reset시키는 기능인 것 같은데 쓰이는 곳이 없음.
+    //미사일 방향을 reset시키는 기능인 것 같은데 쓰이는 곳이 없음.
     public void resetShootDir(Direction dir) {
         if (isLimited())
             return;
@@ -105,7 +108,7 @@ public class Tank extends GameComponent {
         return cannonDir;
     }
 
-    
+    //dir 방향으로 time 시간 만큼만 이동시키고 멈춘다.
     public void setMoveLimit(Direction dir, int time) {
         moveDirLimit = dir;
         moveTimeLimit = time;
@@ -116,7 +119,52 @@ public class Tank extends GameComponent {
     public boolean isLimited() {
         return (moveTimeLimit != 0);
     }
+    
+    public int getPower() {
+        return power;
+    }
+    
+    void moveLimit() {
+    	//ignoreMoveLimit 가 true이면 탱크가 메인 윈도우 밖을 나갈 수 있다. 
+    	//alive를 false로 처리하는데,, 실제로는 죽지는 않음(확인필요)
+        if (ignoreMoveLimit) {
+            if (x < -25 || x > MainWindow.WINDOW_WIDTH + 25
+                    || y < -25 || y > MainWindow.WINDOW_HEIGHT + 25)
+                abolish();
+            return;
+        }
+        //ignoreMoveLimit false이면 밖을 못나가게 위치를 제한함.
+        if (x < 25) {
+            x = 25;
+            blockTime = 70;
+        }
+        if (y < 45) {
+            y = 45;
+            blockTime = 70;
+        }
+        if (x > MainWindow.WINDOW_WIDTH - 25) {
+            x = MainWindow.WINDOW_WIDTH - 25;
+            blockTime = 70;
+        }
+        if (y > MainWindow.WINDOW_HEIGHT - 25) {
+            y = MainWindow.WINDOW_HEIGHT - 25;
+            blockTime = 70;
+        }
+    }
 
+    //TODO : 탱크들 간에 위치가 중복되지 않도록 처리
+    private boolean block(int x, int y) {
+        int dx, dy;
+        blockTime = 1;
+        return false;
+    }
+    
+    //step 만큼 dir 방향으로 위치값 변경. 주로 skill을 사용할때 call 됨.
+    void shift(Direction dir, int step) {
+    x += (int)(step * unitVectorX(dir));
+    y += (int)(step * unitVectorY(dir));
+    
+    }
     
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
