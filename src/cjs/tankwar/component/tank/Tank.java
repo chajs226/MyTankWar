@@ -42,12 +42,81 @@ public class Tank extends GameComponent {
     protected Direction moveDirLimit = STOP;
     protected int moveTimeLimit = 0;
     
-    
+    //이동
     public void setMoveDir(Direction moveDir) {
         this.moveDir = moveDir;
     }
     
+
+    public void setShootDir(Direction dir) {
+        //moveTimeLimit(탱크가 못움직이는 시간)이 있으면,, shootDir을 셋팅하지 않고 리턴한다.
+        if (isLimited())
+            return;
+        if (dir == null) {
+            shootDir = null;
+            return;
+        }
+        this.shootDir = dir;
+        if (shootDir == null)
+            shootDir = STOP;
+        //shootDir이 널이거나 스탑이 아니면.. 미사일의 방향도 shootDir과 같이 셋팅한다.
+        if (shootDir != null && shootDir != STOP)
+            this.cannonDir = shootDir;
+    }
     
+    //미사일의 방향을 설정하는 함수
+    public void setCannonDir(Direction cannonDir) {
+        if (cannonDir != STOP)
+            this.cannonDir = cannonDir;
+    }
+    
+    //Move방향을 reset시키는 기능인 것 같은데 쓰이는 곳이 없음.
+    public void resetMoveDir(Direction dir) {
+        if (isLimited())
+            return;
+        moveDir = erase(moveDir, dir);
+        if ((shootDir == null || shootDir == STOP) && moveDir != STOP)
+            cannonDir = moveDir;
+    }
+    
+    //Shoot 방향을 reset시키는 기능인 것 같은데 쓰이는 곳이 없음.
+    public void resetShootDir(Direction dir) {
+        if (isLimited())
+            return;
+        if (dir == null) {
+            shootDir = STOP;
+            return;
+        }
+        if (shootDir != null && shootDir != STOP)
+            shootDir = erase(shootDir, dir);
+        if (shootDir != null && shootDir != STOP)
+            cannonDir = shootDir;
+    }
+
+    public Direction getShootDir() {
+        return shootDir;
+    }
+
+    public Direction getMoveDir() {
+        return moveDir;
+    }
+
+    public Direction getCannonDir() {
+        return cannonDir;
+    }
+
+    
+    public void setMoveLimit(Direction dir, int time) {
+        moveDirLimit = dir;
+        moveTimeLimit = time;
+    }
+    
+    //moveTimeLimit 변수는 탱크가 움직일수없는 시간
+    //움직일 수 없는 시간이 존재하면 true를 리턴
+    public boolean isLimited() {
+        return (moveTimeLimit != 0);
+    }
+
     
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
