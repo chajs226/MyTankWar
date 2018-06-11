@@ -261,15 +261,45 @@ public class Tank extends GameComponent {
         }
     }
     
+    //탱크 move 처리 STEP이 4로 지정되어 있음
+    public void move() {
+        if (moveTimeLimit > 0) {
+            --moveTimeLimit;
+            move(moveDirLimit, STEP);
+        } else
+            move(moveDir, STEP);
+    }
+    
+    //move 처리 전, 방향을 param 값으로 지정함
+    public void move(Direction dir) {
+        moveDir = dir;
+        move();
+    }
+    
+    //HP 값을 dmg만큼 감소시킴
     public void makeDamage(int dmg) {
+    	//죽어있으면 그냥 return
         if (!alive)
             return;
+        //hp를 dmg 만큼 감소시킴
         modifyHP(-dmg);
+        //hp가 0이면 폭발
         if (HP == 0) {
-            abolish();
-            //explode();
+            abolish(); //alive를 false 처리
+            explode();
         }
         energyBarLastTime = 100;
+    }
+    
+    void explode() {
+//        if (fact == 1) {
+//            MainWindow.addKilled();
+//            if (((ComTank)this).tag == IAMANORANGE)
+//                ComTank.existOrange = false;
+//        }
+//        synchronized (MainWindow.explosions) {
+//            MainWindow.explosions.add(new Explosion(x, y, EXPLOSION_R, fact));
+//        }
     }
     
     public void modifyHP(int dlt) {
