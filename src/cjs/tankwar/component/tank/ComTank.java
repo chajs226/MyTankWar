@@ -1,3 +1,15 @@
+package cjs.tankwar.component.tank;
+
+import cjs.tankwar.component.Automatic;
+
+public class ComTank extends Tank implements Automatic {
+
+	public void autoAct() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
 /*
 package cjs.tankwar.component.tank;
 

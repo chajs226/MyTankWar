@@ -1,3 +1,31 @@
+
+package cjs.tankwar.component.tank;
+
+public class PlayerTank extends Tank {
+    
+	public int step = 6;
+	
+    public static final String[] SKILL_KEY =
+    { "~", "1", "2", "3", "E", "F", "X", "R", "C", "Z", "V", " " };
+    //public static final int SKILL_LIMIT[];
+    private final int lineShootUpdate1 = 1100;
+    private final int lineShootUpdate2 = 2000;
+    private final int dashUpdate = 1500;
+    public long skillUse[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private int sk = -1;
+    protected int MP;
+    protected int maxMP;
+    protected int invisibleTime = 0;
+    protected int energeticTime = 0;
+    protected int crazyTime = 0;
+    protected int accTime = 0;
+    
+    public boolean isInvisible() {
+        return (invisibleTime != 0);
+    }
+}
+
+
 /*
 package cjs.tankwar.component.tank;
 

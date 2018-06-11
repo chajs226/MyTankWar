@@ -14,6 +14,8 @@ import java.io.Console;
 import java.util.List;
 import java.util.Random;
 import cjs.tankwar.component.*;
+import cjs.tankwar.component.tank.ComTank;
+import cjs.tankwar.component.tank.PlayerTank;
 
 import static cjs.tankwar.component.Direction.*;
 import static java.awt.event.KeyEvent.*;
@@ -44,9 +46,9 @@ public class MainWindow extends Frame{
     public static int stat = 0;
 
     //TODO : ComTank, Weapon
-    //public static PlayerTank myTank = null;
-//    public static List<ComTank> tanks = null;
-//    public static List<ComTank> friends = null;
+    public static PlayerTank myTank = null;
+    public static List<ComTank> tanks = null;
+    public static List<ComTank> friends = null;
 //    public static List<Weapon> weapons = null;
 //    public static List<Weapon> supplies = null;
 //    public static List<Weapon> explosions = null;

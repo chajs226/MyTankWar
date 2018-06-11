@@ -152,18 +152,132 @@ public class Tank extends GameComponent {
         }
     }
 
-    //TODO : 탱크들 간에 위치가 중복되지 않도록 처리
+    //탱크들 간에 위치가 중복되지 않도록 처리.
     private boolean block(int x, int y) {
         int dx, dy;
         blockTime = 1;
+        //내가 myTank가 아니면,,  myTank와의 거리를 구해서,, 겹치면 true를 리턴
+        if (MainWindow.myTank != this && !MainWindow.myTank.isInvisible()) {
+            Tank t = MainWindow.myTank;
+            dx = (x - t.x);
+            dy = (y - t.y);
+            if (Math.abs(dx) < Tank.HALF_WIDTH * 2
+                    && Math.abs(dy) < Tank.HALF_WIDTH * 2) {
+                return true;
+            }
+        }
+
+        //탱크들간의 거리를 구해서 상대 탱크와 겹치면 true를 리턴함.
+        //tanks이동처리시 block을 호출함.
+        synchronized (MainWindow.tanks) {
+            for (Tank t : MainWindow.tanks) {
+                if (t == this)
+                    continue;
+                dx = (x - t.x);
+                dy = (y - t.y);
+                if (Math.abs(dx) < Tank.HALF_WIDTH * 2
+                        && Math.abs(dy) < Tank.HALF_WIDTH * 2) {
+                    return true;
+                }
+            }
+        }
+        synchronized (MainWindow.friends) {
+            for (Tank t : MainWindow.friends) {
+                if (t == this)
+                    continue;
+                dx = (x - t.x);
+                dy = (y - t.y);
+                if (Math.abs(dx) < Tank.HALF_WIDTH * 2
+                        && Math.abs(dy) < Tank.HALF_WIDTH * 2) {
+                    return true;
+                }
+            }
+        }
+        blockTime = 0;
         return false;
     }
     
-    //step 만큼 dir 방향으로 위치값 변경. 주로 skill을 사용할때 call 됨.
+    //step 만큼 dir 방향으로 위치값 변경. 
+    //LineShoot이라는 skill을 사용할때 call 됨.
     void shift(Direction dir, int step) {
     x += (int)(step * unitVectorX(dir));
     y += (int)(step * unitVectorY(dir));
     
+    }
+    
+    //crazy모드일 때 사용되는 기술 (Dash라는 스킬)
+    //step 만큼 방향을 위치 시킴
+    public void forceMove(Direction dir, int step) {
+        moveDir = dir;
+        if (moveDir == STOP)
+            return;
+        if (shootDir == STOP)
+            cannonDir = moveDir;
+        x += (int)(step * unitVectorX(dir));
+        y += (int)(step * unitVectorY(dir));
+    }
+    
+    //1. dash 스킬 상에서의 이동 처리
+    //2. 일반적인 상황에서의 이동 처리
+    //3. 화면 프레임 밖을 나갔을 떄의 상황을 체크해서 처리
+    public void move(Direction dir, int step) {
+//	 TODO : Dash 스킬에서 crazy 모드일 떄의 이동
+//        if (this instanceof PlayerTank
+//                && (((PlayerTank)this).isInvisible()
+//                || ((PlayerTank)this).isCrazy())) {
+//            forceMove(dir, step);
+//            if (moveTimeLimit == 0) {
+//                moveLimit();
+//            }
+//            return;
+//        }
+    	//부딪히고, playertank가 아난 경우
+    	//hp를 0으로 셋팅하고 makeDamage로 hp 1을 감소시킴. TODO:왜 HP를 0으로 만들고 -1로 감소시킬까?
+        if (block(x, y) && !(this instanceof PlayerTank)) {
+            HP = 0;
+            makeDamage(1);
+        }
+        moveDir = dir;
+        if (moveDir == STOP)
+            return;
+        //미사일이 발사상태가 아니면..(stop이면) 포의 방향을 이동방향과 동일하게 맞춤
+        if (shootDir == STOP)
+            cannonDir = moveDir;
+        
+        //(tx,ty)가 이동할 위치, (x,y)는 현재위치인데,, block함수에서 이들의 거리를 구해서 block
+        //여부를 리턴함
+        int tx = x, ty = y;
+        tx += (int)(step * unitVectorX(dir));
+        ty += (int)(step * unitVectorY(dir));
+        //이동시킨 거리에서 tank가 부딪히면 이동시키지 않고 return 시킴
+        if (block(tx, ty))
+            return;
+        //block되지 않았으면 위치를 이동시킴
+        x = tx;
+        y = ty;
+        //화면 프레임 밖을 나가게할지 말지의 처리
+        if (moveTimeLimit == 0) {
+            moveLimit();
+        }
+    }
+    
+    public void makeDamage(int dmg) {
+        if (!alive)
+            return;
+        modifyHP(-dmg);
+        if (HP == 0) {
+            abolish();
+            //explode();
+        }
+        energyBarLastTime = 100;
+    }
+    
+    public void modifyHP(int dlt) {
+        HP += dlt;
+        if (HP > maxHP)
+            HP = maxHP;
+        if (HP < 0)
+            HP = 0;
     }
     
 	public void draw(Graphics g) {
