@@ -291,6 +291,13 @@ public class Tank extends GameComponent {
         energyBarLastTime = 100;
     }
     
+    //TODO : dropItem - comTank가 죽을때.. 아이템을 떨어뜨리는 처리를 함
+    void dropItem(int prob) {
+    	
+    }
+    
+    //TODO : addKilled 로 인해서 제거한 탱크 수를 더하고,, 수에 따라 skill이 주어진다.
+    //       explosions를 위해서는 weapon 개발이 필요하다.
     void explode() {
 //        if (fact == 1) {
 //            MainWindow.addKilled();
@@ -301,6 +308,8 @@ public class Tank extends GameComponent {
 //            MainWindow.explosions.add(new Explosion(x, y, EXPLOSION_R, fact));
 //        }
     }
+    
+
     
     public void modifyHP(int dlt) {
         HP += dlt;
