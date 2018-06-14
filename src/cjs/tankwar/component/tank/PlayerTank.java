@@ -23,6 +23,10 @@ public class PlayerTank extends Tank {
     public boolean isInvisible() {
         return (invisibleTime != 0);
     }
+
+	public int getSK() {
+		return sk;
+	}
 }
 
 

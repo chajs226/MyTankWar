@@ -1,7 +1,6 @@
 package cjs.tankwar.component.tank;
 
 import static java.awt.Color.*;
-
 import java.awt.*;
 import java.awt.Graphics;
 
@@ -10,6 +9,8 @@ import cjs.tankwar.component.GameComponent;
 import cjs.tankwar.module.MainWindow;
 
 import static cjs.tankwar.component.Direction.*;
+
+import static cjs.tankwar.module.PropertiesManager.*;
 
 public class Tank extends GameComponent {
 
@@ -309,14 +310,79 @@ public class Tank extends GameComponent {
 //        }
     }
     
-
+    public int getHP() {
+        return HP;
+    }
+    public int getMaxHP() {
+        return maxHP;
+    }
     
+    //HP 값이 수정된다. 타격을 받는 경우에 적용된다.
     public void modifyHP(int dlt) {
         HP += dlt;
         if (HP > maxHP)
             HP = maxHP;
         if (HP < 0)
             HP = 0;
+    }
+    
+    //tank에서는 의미가 없지만, playerTank에서는 스킬리스트에 BlockShootSkill이 있다면, true를 리턴한다.
+    //여기서는 ComTank가 사용하는 메소드일 것이고, shoot을 막는 기능이 없다.
+    public boolean shootBlocked() {
+        return false;
+    }
+    
+    //TODO : 미사일은 탱크를 그리고 움직임까지 구현되면 다음 step.
+    public void launch() {
+    	//탱크가 움직일 수 없다면 launch 처리를 안하고 중간에 리턴해버린다.
+        if (isLimited())
+            return;
+        //shootBlock 상태이면.. launch 처리를 안하고 리턴.
+        if (shootBlocked())
+            return;
+        
+        //CANNON_LEN 는 35롤 셋팅됨. 
+        int nx = x, ny = y, cl = CANNON_LEN + 4;
+        
+        //미사일의 위치를 tank의 x,y좌표에서 포의 방향으로 x,y값을 더해서 구함
+        nx += (int)(cl * unitVectorX(cannonDir));
+        ny += (int)(cl * unitVectorY(cannonDir));
+        
+//        Missile m = new Missile(nx, ny, cannonDir, power, this.fact);
+//        synchronized (MainWindow.weapons) {
+//            MainWindow.weapons.add(m);
+//        }
+//        m.explode();
+
+    }
+    
+  //TODO : 미사일은 탱크를 그리고 움직임까지 구현되면 다음 step.
+//    public void launch(Missile m) {
+//        if (isLimited())
+//            return;
+//        int nx = x, ny = y, cl = CANNON_LEN + 4;
+//        nx += (int)(cl * unitVectorX(cannonDir));
+//        ny += (int)(cl * unitVectorY(cannonDir));
+//        m.setX(nx);
+//        m.setY(ny);
+//        synchronized (MainWindow.weapons) {
+//            MainWindow.weapons.add(m);
+//        }
+//        m.explode();
+//
+//    }
+    
+    //TODO : 뭘그리는 것인지 잘모르겠음. clr2값을 다른색으로 바꿔봐도 탱크의 본체색상은 안변함.
+    protected void drawChassis(Graphics g) {
+    	//기본으로 black 색상으로 그림.
+        g.setColor(clr2);
+        //playerTank이고,, 스킬을 가지고 있는데,, crazy상태라면.. whiteGreen으로 칠함.
+        if (this instanceof PlayerTank && ((PlayerTank)this).getSK() != 0) {
+            if (((PlayerTank)this).crazyTime > 0 && random.nextInt(100) < 50)
+                g.setColor(whiteGreen);
+        }
+        g.fillRoundRect(x - HALF_WIDTH, y - HALF_WIDTH, HALF_WIDTH * 2,
+                HALF_WIDTH * 2, 10, 10);
     }
     
 	public void draw(Graphics g) {
