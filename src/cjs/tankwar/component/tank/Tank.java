@@ -1,12 +1,14 @@
 package cjs.tankwar.component.tank;
 
 import static java.awt.Color.*;
+
 import java.awt.*;
-import java.awt.Graphics;
+import java.io.Serializable;
 
 import cjs.tankwar.component.Direction;
 import cjs.tankwar.component.GameComponent;
 import cjs.tankwar.module.MainWindow;
+import cjs.tankwar.module.ConsoleWindow;
 
 import static cjs.tankwar.component.Direction.*;
 
@@ -385,10 +387,154 @@ public class Tank extends GameComponent {
                 HALF_WIDTH * 2, 10, 10);
     }
     
+    //탱크의 대포부분 그리기
+    protected void drawCannon(Graphics g) {
+        int rnd = random.nextInt(100);
+        if (clr3 != null)
+            g.setColor(clr3);
+        else
+            g.setColor(clr1);
+
+        if (this instanceof PlayerTank && ((PlayerTank)this).getSK() != 0) {
+            if (((PlayerTank)this).energeticTime > 0 && rnd < 50)
+                g.setColor(whiteGreen);
+        }
+
+        switch (cannonDir) {
+            case UP:
+                g.fillRect(x - CANNON_R, y - CANNON_LEN,
+                        CANNON_R * 2, CANNON_LEN);
+                break;
+            case DOWN:
+                g.fillRect(x - CANNON_R, y,
+                        CANNON_R * 2, CANNON_LEN);
+                break;
+            case LEFT:
+                g.fillRect(x - CANNON_LEN, y - CANNON_R,
+                        CANNON_LEN, CANNON_R * 2);
+                break;
+            case RIGHT:
+                g.fillRect(x, y - CANNON_R,
+                        CANNON_LEN, CANNON_R * 2);
+                break;
+            case UP_LEFT: {
+                int[] xpoint = { x - 32, x - 25, x, x - 7 }, ypoint = { y - 25,
+                        y - 32, y - 7, y };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+            case UP_RIGHT: {
+                int[] xpoint = { x + 25, x + 32, x + 7, x }, ypoint = { y - 32,
+                        y - 25, y, y - 7 };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+            case DOWN_LEFT: {
+                int[] xpoint = { x - 7, x, x - 25, x - 32 }, ypoint = { y,
+                        y + 7, y + 32, y + 25 };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+            case DOWN_RIGHT: {
+                int[] xpoint = { x, x + 7, x + 32, x + 25 }, ypoint = { y + 7,
+                        y, y + 25, y + 32 };
+                g.fillPolygon(xpoint, ypoint, 4);
+                break;
+            }
+        }
+        g.setColor(clr1);
+        if (this instanceof PlayerTank && ((PlayerTank)this).getSK() != 0) {
+            if (((PlayerTank)this).energeticTime > 0 && rnd < 50)
+                g.setColor(whiteGreen);
+        }
+        g.fillOval(x - R, y - R, R * 2, R * 2);
+    }
+    
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	//TODO : Dialog 띄워보면서 테스트.
+	class Dialog implements Serializable {
+
+        protected String[] content = null;
+        protected int textHeight;
+        protected int textWidth = 0;
+        protected Direction dir = DOWN_LEFT;
+        protected int lastTime = 2000;
+
+        //content를 넘겨받아서 content변수에 assign하고, content의 너비 높이 등을 구한다.
+        public Dialog(String _content) {
+            FontMetrics fm = ConsoleWindow.console.getFontMetrics(BUBBLE_FONT);
+            content = _content.split("\n");
+            textHeight = content.length * BUBBLE_FONT.getSize()
+                    + DIALOG_BORDER_WIDTH * 2;
+            for (int i = 0; i < content.length; ++i)
+                textWidth = Math.max(textWidth, fm.stringWidth(content[i]));
+            textWidth += DIALOG_BORDER_WIDTH * 2;
+    
+        }
+
+        private Point locateRect() {
+            int nx = x, ny = y;
+            int sumOffsetX = Tank.HALF_WIDTH + DIALOG_ARROW_WIDTH + 3;
+            int sumOffsetY = Tank.HALF_WIDTH + DIALOG_ARROW_WIDTH + 3;
+            if (dir.includes(UP))
+                ny -= sumOffsetY + textHeight;
+            if (dir.includes(LEFT))
+                nx -= sumOffsetX + textWidth;
+            if (dir.includes(DOWN))
+                ny += sumOffsetY;
+            if (dir.includes(RIGHT))
+                nx += sumOffsetX;
+            return new Point(nx, ny);
+        }
+
+        private Polygon getArrow() {
+            Polygon pol = new Polygon();
+            int px = x, py = y;
+            px += unitVectorX(dir) * Math.sqrt(2.0) * (Tank.HALF_WIDTH + 5);
+            py += unitVectorY(dir) * Math.sqrt(2.0) * (Tank.HALF_WIDTH + 5);
+            pol.addPoint(px, py);
+            px += unitVectorX(dir) * Math.sqrt(2.0) * DIALOG_ARROW_WIDTH;
+            py += unitVectorY(dir) * Math.sqrt(2.0) * DIALOG_ARROW_WIDTH;
+            pol.addPoint(px, py + 3);
+            pol.addPoint(px, py - 3);
+            return pol;
+        }
+        
+        private void refreshDirection() {
+            if (x < textWidth + 40)
+                dir = compose(dir, RIGHT);
+            if (y < textHeight + 60)
+                dir = compose(dir, DOWN);
+            if (x > MainWindow.WINDOW_WIDTH - textWidth - 40)
+                dir = compose(dir, LEFT);
+            if (y > MainWindow.WINDOW_HEIGHT -textHeight - 40)
+                dir = compose(dir, UP);
+            
+        }
+        
+        public void draw(Graphics g) {
+        	//lastTime의 초기값이 2000
+            if (lastTime > 0 && MainWindow.stat != MainWindow.STAT_PAUSE)
+                --lastTime;
+            if (lastTime == 0)
+                Tank.this.dialog = null;
+            refreshDirection();
+            g.setColor(DIALOG_BACKGROUND_COLOR);
+            Point p = locateRect();
+            g.fillRoundRect(p.x, p.y, textWidth, textHeight,
+                    DIALOG_BORDER_WIDTH, DIALOG_BORDER_WIDTH);
+            g.fillPolygon(getArrow());
+            g.setColor(DIALOG_FOREGROUND_COLOR);
+            g.setFont(BUBBLE_FONT);
+            for (int i = 0; i < content.length; ++i)
+                g.drawString(content[i], p.x + DIALOG_BORDER_WIDTH,
+                        p.y + DIALOG_BORDER_WIDTH + BUBBLE_FONT.getSize() * (i + 1));
+        }
+    }
 	
 }
 

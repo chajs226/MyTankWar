@@ -1,3 +1,16 @@
+package cjs.tankwar.module;
+
+import java.awt.Frame;
+
+public class ConsoleWindow extends Frame {
+	
+	public static final ConsoleWindow console = new ConsoleWindow();
+	private ConsoleWindow() {
+		super();
+		
+	}
+}
+
 /*
 package cjs.tankwar.module;
 
