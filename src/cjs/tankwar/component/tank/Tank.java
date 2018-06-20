@@ -455,12 +455,13 @@ public class Tank extends GameComponent {
 		
 	}
 	
-	//TODO : Dialog 띄워보면서 테스트.
+	//PlayerTank 의 이름을 띄우는 다이얼로그
 	class Dialog implements Serializable {
 
         protected String[] content = null;
         protected int textHeight;
         protected int textWidth = 0;
+        //이름 다이얼로그의 초기값은 탱크의 왼쪽 아래
         protected Direction dir = DOWN_LEFT;
         protected int lastTime = 2000;
 
@@ -476,6 +477,7 @@ public class Tank extends GameComponent {
     
         }
 
+        //dialog가 위치할 x, y 값을 리턴함
         private Point locateRect() {
             int nx = x, ny = y;
             int sumOffsetX = Tank.HALF_WIDTH + DIALOG_ARROW_WIDTH + 3;
@@ -505,6 +507,8 @@ public class Tank extends GameComponent {
         }
         
         private void refreshDirection() {
+        	//탱크의 위치가 텍스트width보다 작으면(글자박스가 프레임왼쪽으로 나가는 경우), dialog를 오른쪽으로 옮긴다.
+        	//프레임을 벗어나는 경우에 대해서 각각 dialog 위치를 이동시켜줌
             if (x < textWidth + 40)
                 dir = compose(dir, RIGHT);
             if (y < textHeight + 60)
@@ -520,10 +524,13 @@ public class Tank extends GameComponent {
         	//lastTime의 초기값이 2000
             if (lastTime > 0 && MainWindow.stat != MainWindow.STAT_PAUSE)
                 --lastTime;
+            //lastTIme이 0이면 이름다이얼로그를 안띄움
             if (lastTime == 0)
                 Tank.this.dialog = null;
+            
             refreshDirection();
             g.setColor(DIALOG_BACKGROUND_COLOR);
+            //위치를 구해서 dialog를 그림.
             Point p = locateRect();
             g.fillRoundRect(p.x, p.y, textWidth, textHeight,
                     DIALOG_BORDER_WIDTH, DIALOG_BORDER_WIDTH);

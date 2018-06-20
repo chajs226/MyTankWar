@@ -31,7 +31,7 @@ public enum Direction implements Serializable{
         this.value = value;
     } 
     
-  //TODO : 용도는???
+  //DIR 방향중에 유효한 값이 넘어왔는지 확인. 방향값 검증
     public static Direction forDirection(int dirValue) {
         for (Direction dir : DIRECTIONS_WITH_STOP)
             if (dirValue == dir.value)
