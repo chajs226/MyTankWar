@@ -1,13 +1,62 @@
 package cjs.tankwar.component.tank;
 
+import java.awt.Color;
+
 import cjs.tankwar.component.Automatic;
+
 
 public class ComTank extends Tank implements Automatic {
 
+    static final int[] BOMBER_EXPLOSION_R = 
+        { 25, 32, 40, 48, 55, 70, 71, 70, 48, 40 };
+	static final int lockSpeed = 30;
+	static boolean existOrange = false;
+	public final ComTankType tag;
+	protected int step = 3;
+
+	//TODO : 액션 전략
+	//protected TankActionStrategy strategy = new NormalActionStrategy(this, 60);
+	
+	//생성자
+	public ComTank(int _x, int _y, Color _clr1, Color _clr2, int _fact) {
+		x = _x;
+		y = _y;
+        clr1 = _clr1;
+        clr2 = _clr2;
+        fact = _fact;
+        tag = null;
+	}
+
+    public ComTank(Color _clr1, Color _clr2, int _fact, int _HP, int _power,
+            int _step) {
+        clr1 = _clr1;
+        clr2 = _clr2;
+        fact = _fact;
+        maxHP = HP = _HP;
+        power = _power;
+        step = _step;
+        tag = null;
+    }
+    
+    //ComTanke 생성자. 탱크 타입에 따라 탱크생성에 필요한 초기값을 셋팅
+    public ComTank(ComTankType s) {
+        this(s, random.nextInt(4));
+    }
+    
+    public ComTank(ComTankType s, int d) {
+    	
+    	tag = s;
+    }
+    
 	public void autoAct() {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public static enum ComTankType {
+		ENEMY, FRIEND, FAKE_PLAYER, SHOOTER, IAMANORANGE, SNIPER, BOMBER, SOY_SAUCE, ENGINEER;
+    }
+	
 	
 }
 /*
