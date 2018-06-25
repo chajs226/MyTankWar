@@ -119,10 +119,50 @@ public class MainWindow extends Frame{
   
 	}
 	
+	
+    /* Main */
+    public static void main(String args[]) {
+        if (args.length != 0)
+            if (args[0].startsWith("-")) {
+                if (args[0].contains("s"))
+                    ENABLE_SAVE = true;
+                if (args[0].contains("d"))
+                    DEBUG = true;
+                if (args[0].contains("c"));
+              //TODO: RanklistManager
+                //if (args[0].contains("r"))                	
+                    //RanklistManager.clearRanklist();
+            }
+    }
+    
+    /* Game Control Methods */
+    public static void addKilled() {
+        if (stat != STAT_GAME)
+            return;
+        synchronized (killedLock) {
+            ++killed;
+            //Tank를 1000개 죽였을 때의 처리
+            //if (killed == 1000)
+                //myTank.speak("Thousand Killed.");
+            //myTank.hintNewSkill(killed);
+        }
+    }
+    
+    public static int getKilled() {
+    	return killed;
+    }
+    
+    public static void setKilled(int k) {
+    	killed = k;
+    }
+    
+    
+	
     private void newThreads() {
         gameRunThread = new GameRunThread();
 
     }
+    
     
     //gameRunThread.start 함수를 호출하면 GameRunThread 클래스의 run 함수가 호출된다. 
     //(Thread 클래스의 자식 클래스) 
@@ -606,21 +646,7 @@ public class MainWindow extends Frame{
     }
     
 
-	
-    /* Main */
-    public static void main(String args[]) {
-        if (args.length != 0)
-            if (args[0].startsWith("-")) {
-                if (args[0].contains("s"))
-                    ENABLE_SAVE = true;
-                if (args[0].contains("d"))
-                    DEBUG = true;
-                if (args[0].contains("c"));
-              //TODO: RanklistManager
-                //if (args[0].contains("r"))                	
-                    //RanklistManager.clearRanklist();
-            }
-    }
+
 	
 	
 }
