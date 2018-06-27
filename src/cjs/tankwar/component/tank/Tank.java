@@ -112,6 +112,7 @@ public class Tank extends GameComponent {
     }
 
     //dir 방향으로 time 시간 만큼만 이동시키고 멈춘다.
+    //ComTank가 처음 생성될때, 약간 이동시키기 위함. time 시간만큼 dir방향으로 이동 후, 미사일을 쏘기 시작함.
     public void setMoveLimit(Direction dir, int time) {
         moveDirLimit = dir;
         moveTimeLimit = time;
