@@ -11,13 +11,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Console;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import cjs.tankwar.component.*;
-import cjs.tankwar.component.tank.ComTank;
-import cjs.tankwar.component.tank.PlayerTank;
+import cjs.tankwar.component.tank.*;
 
 import static cjs.tankwar.component.Direction.*;
+import static cjs.tankwar.component.tank.ComTank.ComTankType;
 import static java.awt.event.KeyEvent.*;
 //import cjs.tankwar.component.tank.PlayerTank;
 
@@ -89,23 +90,23 @@ public class MainWindow extends Frame{
         addKeyListener(new MainKeyAdapter());
         
         //TODO: gameRestart. 게임 속 캐릭터 등의 객체를 clear하고 재생성
-        //gameRestart();
+        gameRestart();
         
         //게임상태값을 STAT_START로 설정
         stat = STAT_START;
         //TODO: friend와 com 탱크의 객체를 생성해서 리스트에 추가한다.
         // 이작업은 스레드간의 동기화 처리를 해서 서로 간섭되지 않도록 한다. 
         //게임 시작을 위한 생성자 부분에서 멀티스레드 처리가 필요한지는 의문이다.
-//        synchronized (friends) {
-//            friends.add(new ComTank(FAKE_PLAYER, 2));
-//            friends.add(new ComTank(FRIEND));
-//            friends.add(new ComTank(FRIEND));
-//        }
-//        synchronized (tanks) {
-//            tanks.add(new ComTank(ENEMY));
-//            tanks.add(new ComTank(ENEMY));
-//            tanks.add(new ComTank(ENEMY));
-//        }
+        synchronized (friends) {
+            friends.add(new ComTank(FAKE_PLAYER, 2));
+            friends.add(new ComTank(FRIEND));
+            friends.add(new ComTank(FRIEND));
+        }
+        synchronized (tanks) {
+            tanks.add(new ComTank(ENEMY));
+            tanks.add(new ComTank(ENEMY));
+            tanks.add(new ComTank(ENEMY));
+        }
         stat = STAT_START;
         
         //GameRunThread 생성
@@ -156,6 +157,22 @@ public class MainWindow extends Frame{
     	killed = k;
     }
     
+    //TODO : 우선 ComTank만 생성
+    public static void gameRestart() {
+    	valid = !DEBUG;
+    	tanks = new ArrayList<ComTank>();
+    	friends = new ArrayList<ComTank>();
+    	stat = STAT_GAME;
+    	freezed = 0;
+    	gameID = VERSION +
+    			playerName + "," +
+    			System.currentTimeMillis() + "," +
+    			myTank.hashCode();
+    	if (!DEBUG) {
+    		killed = 0;
+    		waveNum = 0;
+    	}
+    }
     
 	
     private void newThreads() {

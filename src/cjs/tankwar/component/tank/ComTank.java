@@ -3,6 +3,7 @@ package cjs.tankwar.component.tank;
 import static java.awt.Color.*;
 import static cjs.tankwar.component.Direction.*;
 import java.awt.Color;
+import java.awt.Graphics;
 
 import cjs.tankwar.component.*;
 import cjs.tankwar.component.Automatic;
@@ -225,13 +226,61 @@ public class ComTank extends Tank implements Automatic {
     }
     
     public void move() {
-    	
+    	if (moveTimeLimit > 0) {
+    		--moveTimeLimit;
+    		move(moveDirLimit, 4);
+    	} else {
+    		//step = 3
+    		move(moveDir, step);
+    	}
     }
     
 	public void autoAct() {
-		// TODO Auto-generated method stub
-		
-	}
+		//moveTimeLimit 가 0이 아니면 true
+		if (isLimited()) {
+			move();
+			return;
+		}
+		//TODO : strategy 구현
+		//strategy.act();
+		}
+
+	//에너지바를 그림
+    public void drawEnergyBar(Graphics g) {
+        g.setColor(red);
+        if (HP > 0)
+            g.fillRect(x - Tank.HALF_WIDTH, y + Tank.HALF_WIDTH + 25,
+                    (int)((double)Tank.HALF_WIDTH * 2 * ((double)HP / maxHP)),
+                    3);
+        g.setColor(black);
+        g.drawRect(x - Tank.HALF_WIDTH, y + Tank.HALF_WIDTH + 25,
+                Tank.HALF_WIDTH * 2, 3);
+    }
+
+    public void draw(Graphics g) {
+        super.draw(g);
+        //탱크가 살아있는 상태이고 에너지바가 남아있으면 에너지바를 그림
+        //게임이 멈춤상태가 아니면 에너지바를 조금씩 감소시킴
+        if (alive && energyBarLastTime > 0) {
+            if (MainWindow.stat != MainWindow.STAT_PAUSE)
+                --energyBarLastTime;
+            drawEnergyBar(g);
+        }
+        //TODO: strategy. 구현
+        //if (strategy instanceof Drawable) {
+        //	((Drawable)strategy).draw(g);
+        //}
+    }
+
+    /* Getters & Setters */
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
+    }
+
 	
 	public static enum ComTankType {
 		ENEMY, FRIEND, FAKE_PLAYER, SHOOTER, IAMANORANGE, SNIPER, BOMBER, SOY_SAUCE, ENGINEER;
