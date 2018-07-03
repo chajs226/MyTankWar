@@ -18,7 +18,7 @@ import cjs.tankwar.component.*;
 import cjs.tankwar.component.tank.*;
 
 import static cjs.tankwar.component.Direction.*;
-import static cjs.tankwar.component.tank.ComTank.ComTankType;
+import static cjs.tankwar.component.tank.ComTank.ComTankType.*;
 import static java.awt.event.KeyEvent.*;
 //import cjs.tankwar.component.tank.PlayerTank;
 
@@ -108,7 +108,6 @@ public class MainWindow extends Frame{
             tanks.add(new ComTank(ENEMY));
         }
         stat = STAT_START;
-        
         //GameRunThread 생성
         newThreads();
         //GameRunThread.run 실행
@@ -222,7 +221,9 @@ public class MainWindow extends Frame{
         			//TODO: 
         			// 1. myTank 를 움직인다.
         			// 2. firends, tanks, supplies, weapos, explosions 를 act한다.
-        			// 3. loopCount 5번째마다, HP, MP, useSkill
+        			actAll(friends);
+        			actAll(tanks);
+        			// 3. loopCount 5번째마다, mytank의 HP, MP, useSkill 수정
         			// 4. MP값이나 여러값을 고려해서,, skill 을 stop처리. 혹은 skill use 처리하는듯
         			// 5. mytank 슛방향이 널이 아니면 launch시킴 (미사일을 쏠 수 있는 상태이면 미사일을 발사함.)
         			// 6. 게임이 시작상태이고, looCount를 7번 이후, 50번마다.. com 탱크를 생성한다. 
