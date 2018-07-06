@@ -51,7 +51,7 @@ public class ComTank extends Tank implements Automatic {
         this(s, random.nextInt(4));
     }
     
-       
+    //d는 탱크의 생성 위치를 구하는데 사용된다.   
     public ComTank(ComTankType s, int d) {
     	//ComTank가 friend, orange가 아니면.. 3/1000 확률로 SOY_SAUCE로 만든다.
     	//ComTank가 friend이고.. orange가 없으면 3/1000확률로 orange로 만든다.
